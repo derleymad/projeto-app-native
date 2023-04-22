@@ -1,0 +1,29 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "public/fonts/Nunito-Black.ttf",
+      "sha1": "d31807e29b4cba7f04b62b144e5516ebcab0532f"
+    },
+    {
+      "path": "public/fonts/Quicksand-Bold.ttf",
+      "sha1": "4f98e9333ad7ea2025b1fb70fbee0d6ce4b49a6c"
+    },
+    {
+      "path": "public/fonts/Quicksand-Light.ttf",
+      "sha1": "aaf4796e5373097216afa70cff09ab4fb30eddcd"
+    },
+    {
+      "path": "public/fonts/Quicksand-Medium.ttf",
+      "sha1": "066c0ac4db5e0979dbdb5759ed8ebdfd97449df9"
+    },
+    {
+      "path": "public/fonts/Quicksand-Regular.ttf",
+      "sha1": "775d31983d9f6f890c21ac0fcf4eab06ce7617fc"
+    },
+    {
+      "path": "public/fonts/Quicksand-SemiBold.ttf",
+      "sha1": "a493611a183ff93844befaaaf406011b030a2785"
+    }
+  ]
+}
