@@ -7,18 +7,21 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "load:assets": "react-native-asset"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.5.7",
-    "material-ui-community-icons": "^0.15.0",
+    "@react-navigation/native": "^6.1.6",
+    "native-base": "^3.4.28",
     "react": "18.2.0",
     "react-native": "0.71.3",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-reanimated": "^3.0.1",
-    "react-native-safe-area-context": "^4.5.0",
+    "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "^3.20.0",
+    "react-native-svg": "^12.1.1",
     "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {
@@ -36,6 +39,8 @@
     "jest": "^29.2.1",
     "metro-react-native-babel-preset": "0.73.7",
     "prettier": "^2.4.1",
+    "react-native-asset": "^2.1.0",
+    "react-native-svg-transformer": "^1.0.0",
     "react-test-renderer": "18.2.0",
     "typescript": "4.8.4"
   },
