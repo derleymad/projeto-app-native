@@ -59,8 +59,10 @@ export default function Login({ navigation }: Props) {
                 style={{
                   paddingLeft: 16.5,
                 }}
+                
               />
             }
+            onPress={() => navigation.navigate("Authenticated")}
           >
             Log-in
           </Button>
