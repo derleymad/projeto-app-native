@@ -1,16 +1,15 @@
-import { IButtonProps, ITextProps } from "native-base";
+import {IButtonProps, ITextProps} from 'native-base';
 
 export const ContainerStyles = {
   alignItems: 'center',
   paddingTop: '94px',
-  background: 'primary.default',
   height: 'full',
   fontFamily: 'default',
   fontWeight: 400,
-}
+};
 
 export const InputStyles = {
-  variant:'rounded',
+  variant: 'rounded',
   width: 300,
   height: 47,
   fontSize: 16,
@@ -19,11 +18,11 @@ export const InputStyles = {
   _dark: {
     bg: 'gray.50',
     _hover: {
-      bg: 'gray.50'
+      bg: 'gray.50',
     },
     _focus: {
-      bg: 'gray.50'
-    }
+      bg: 'gray.50',
+    },
   },
 };
 
@@ -36,18 +35,18 @@ export const ButtonStyles: IButtonProps = {
   fontSize: 16,
   flexDir: 'row',
   fontWeight: 600,
-}
+};
 
 export const AnchorButtonStyle: IButtonProps = {
   bg: 'transparent',
   _pressed: {
     bg: 'transparent',
-  }
+  },
 };
 
 export const AnchorTextStyle = (isUnderline = false): ITextProps => ({
   color: 'secondary.default',
-  textDecorationLine: isUnderline ? "underline" : "none",
+  textDecorationLine: isUnderline ? 'underline' : 'none',
   fontWeight: isUnderline ? 500 : 400,
   fontSize: 16,
 });
