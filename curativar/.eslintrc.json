@@ -1,0 +1,28 @@
+{
+  "env": {
+      "es2021": true,
+      "node": true
+  },
+  "extends": [
+      "plugin:react/recommended",
+      "airbnb",
+      "airbnb-typescript",
+      "airbnb/hooks",
+      "prettier"
+  ],
+  "overrides": [
+  ],
+  "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module",
+      "project": ["./tsconfig.json"]
+  },
+  "plugins": [
+      "react",
+      "react-native"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": 0,
+    "react/jsx-props-no-spreading": 0
+  }
+}

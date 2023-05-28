@@ -1,15 +1,14 @@
 import React from 'react';
 import {NativeBaseProvider} from 'native-base';
-import theme from './src/assets/theme';
-import Login from './src/page/login';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import theme from './src/assets/theme';
+import Login from './src/page/login';
 import Register from './src/page/register';
 import Recover from './src/page/recover';
 import { RootStackParamList } from './src/types/navigation';
 import Authenticated from './Authenticated';
 import Post from './src/page/post';
-import CreatePost from './src/page/createPost';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

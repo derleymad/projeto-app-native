@@ -52,7 +52,7 @@ export default function Interactions({navigation}: Props){
                   >
                       <Select.Item label="Mais recentes" value="last" />
                       <Select.Item label="Por data" value="date" />
-                    </Select>
+                  </Select>
 
                   {filter === "date" ?
                     <HStack space={4} mt={1}>
