@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootBottomTabParamList } from "../../types/navigation";
 import { Box, useColorMode } from "native-base";
 import PostsList from "../../components/PostsList";
+import OptionMenu from "../../components/OptionMenu";
 
 type Props = NativeStackScreenProps<RootBottomTabParamList, 'Feed'>;
 
@@ -11,7 +12,7 @@ export default function Feed({navigation}: Props){
 
   return (
     <Box backgroundColor={dark ? "#121827" : "#EDEFF1" }>
-      <PostsList posts={mockPosts} />
+      <PostsList posts={mockPosts} HeaderFlatist={OptionMenu}/>
     </Box>
   );
 }

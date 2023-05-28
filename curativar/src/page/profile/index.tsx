@@ -1,10 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootBottomTabParamList } from "../../types/navigation";
 import SelectImageInput from "../../components/SelectImageInput";
-import { Avatar, Box, HStack, Image, ScrollView, Text, VStack, useColorMode, useSafeArea, useTheme } from "native-base";
+import { Avatar, Box, HStack, Image, ScrollView, Text, useColorMode, useTheme } from "native-base";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
 import { useWindowDimensions } from "react-native";
-import { useEffect, useState } from "react";
+import OptionMenu from "../../components/OptionMenu";
 
 type Props = NativeStackScreenProps<RootBottomTabParamList, 'Profile'>;
 
@@ -26,29 +26,21 @@ export default function Profile({navigation}: Props){
 
   return (
     <ScrollView bgColor={ dark ? "secondary.default" : "gray.50" }>
+      <OptionMenu />
       <Box 
         alignItems={"center"} 
         p={10}
       >
-        {/* <SelectImageInput setImageAssets={setImageAssets}> */}
-          <Box position="relative">
-            {mockUserData.photo ?
-              <Avatar size={150} bgColor="gray.50" my={34} source={{
-                uri: mockUserData.photo
-              }} /> : 
-              <Avatar size={150} bgColor="gray.50" my={34}>
-                <ProfileIcon />
-              </Avatar> 
-            }
-            <Avatar size={45} bgColor={ dark ? "primary.500" : "primary.default" } my={34} position="absolute" bottom={0} right={0}>
-              <FontAwesomeIcons
-                name="pen"
-                color="#121827"
-                size={20}
-              /> 
-            </Avatar>
-          </Box>
-        {/* </SelectImageInput> */}
+        <Box position="relative">
+          {mockUserData.photo ?
+            <Avatar size={150} bgColor="gray.50" my={34} source={{
+              uri: mockUserData.photo
+            }} /> : 
+            <Avatar size={150} bgColor="gray.50" my={34}>
+              <ProfileIcon />
+            </Avatar> 
+          }
+        </Box>
 
         <Text fontFamily={"default"} fontWeight={700} fontSize={24} color={dark ? "gray.50" : "secondary.default" }>{mockUserData.name}</Text>
 

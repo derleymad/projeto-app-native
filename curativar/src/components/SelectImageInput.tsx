@@ -48,7 +48,7 @@ export default function SelectImageInput({ setImageAssets, children } : SelectIm
 
       <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} >
         <Modal.Content bgColor={"gray.800"} borderRadius={20}>
-          <Modal.Body>
+          <Modal.Body alignItems="flex-start" paddingLeft="25%">
             <Button 
               variant="ghost" 
               leftIcon={ <SelectImageIcon name={"camera"} /> }
