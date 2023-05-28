@@ -22,7 +22,6 @@ export default function App() {
           <Stack.Screen name="Register" component={Register} options={{ }}/>
           <Stack.Screen name="Recover" component={Recover} options={{ }}/>
           <Stack.Screen name="Authenticated" component={Authenticated} options={{ }}/>
-          <Stack.Screen name="CreatePost" component={CreatePost} options={{ }}/>
           <Stack.Screen name="Post" component={Post} options={{ }}/>
         </Stack.Navigator>
       </NavigationContainer>
