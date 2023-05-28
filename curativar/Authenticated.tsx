@@ -23,7 +23,8 @@ export default function Authenticated() {
         headerShown: false, 
         tabBarStyle: {
           height: 77,
-          backgroundColor: dark ?  "#121827" : colors.gray[50]
+          backgroundColor: dark ?  "#121827" : colors.gray[50],
+          borderTopColor: dark ?  "#121827" : colors.gray[50],
         },
         tabBarLabel:() => {return null},
         tabBarActiveTintColor:  dark ?  "#2EA58B" : "#47C9AD",

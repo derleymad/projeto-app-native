@@ -2,6 +2,9 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Box, Image, Pressable, FlatList, useColorMode, Avatar, Text, HStack, Flex } from "native-base";
 import { useWindowDimensions } from "react-native";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
+import OptionMenu from "./OptionMenu";
+import { ReactElement } from "react";
+import { InterfaceBoxProps } from "native-base/lib/typescript/components/primitives/Box";
 
 interface PostsListProps{
   posts: {
@@ -12,10 +15,11 @@ interface PostsListProps{
       name: string,
       uri: string | null,
     },
-  }[]
+  }[];
+  HeaderFlatist?: any;
 }
 
-export default function PostsList({ posts }: PostsListProps){
+export default function PostsList({ posts, HeaderFlatist }: PostsListProps){
   const { width } = useWindowDimensions();
 
   const handlePressPost = () => {}
@@ -24,6 +28,7 @@ export default function PostsList({ posts }: PostsListProps){
     <FlatList 
       w={"100%"}
       data={posts} 
+      ListHeaderComponent={HeaderFlatist ? HeaderFlatist : null}
       renderItem={({ item }) => (
         <Box width={"100%"} alignItems={"center"}>
           <Pressable 
@@ -69,7 +74,7 @@ export default function PostsList({ posts }: PostsListProps){
               }
               
               <Flex flexShrink={1}>
-                <Text numberOfLines={1} >{item.postCreator.name}</Text>
+                <Text numberOfLines={1} color="gray.50">{item.postCreator.name}</Text>
               </Flex>
             </HStack>
           </Pressable>
