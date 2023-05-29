@@ -24,6 +24,15 @@ export const InputStyles = {
       bg: 'gray.50',
     },
   },
+  _light: {
+    bg: 'gray.50',
+    _hover: {
+      bg: 'gray.50',
+    },
+    _focus: {
+      bg: 'gray.50',
+    },
+  },
 };
 
 export const ButtonStyles: IButtonProps = {

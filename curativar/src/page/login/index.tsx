@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Pressable, Input, Stack, Text, Button, KeyboardAvoidingView, ScrollView } from 'native-base';
-import Logo from '../../../public/svg/logo.svg';
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { AnchorButtonStyle, AnchorTextStyle, ButtonStyles, ContainerStyles, InputStyles } from './styles';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AnchorButtonStyle, AnchorTextStyle, ButtonStyles, ContainerStyles, InputStyles } from './styles';
+import Logo from '../../../public/svg/logo.svg';
 import { RootStackParamList } from '../../types/navigation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
