@@ -9,6 +9,7 @@ import Recover from './src/page/recover';
 import { RootStackParamList } from './src/types/navigation';
 import Authenticated from './Authenticated';
 import Post from './src/page/post';
+import Messages from './src/page/messages/intex';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -22,6 +23,7 @@ export default function App() {
           <Stack.Screen name="Recover" component={Recover} options={{ }}/>
           <Stack.Screen name="Authenticated" component={Authenticated} options={{ }}/>
           <Stack.Screen name="Post" component={Post} options={{ }}/>
+          <Stack.Screen name="Messages" component={Messages} options={{ }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>

@@ -1,10 +1,6 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Box, Image, Pressable, FlatList, useColorMode, Avatar, Text, HStack, Flex } from "native-base";
+import { Box, Image, Pressable, FlatList, Avatar, Text, HStack, Flex } from "native-base";
 import { useWindowDimensions } from "react-native";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
-import OptionMenu from "./OptionMenu";
-import { ReactElement } from "react";
-import { InterfaceBoxProps } from "native-base/lib/typescript/components/primitives/Box";
 
 interface PostsListProps{
   posts: {
@@ -17,12 +13,13 @@ interface PostsListProps{
     },
   }[];
   HeaderFlatist?: any;
+  navigation: any
 }
 
-export default function PostsList({ posts, HeaderFlatist }: PostsListProps){
+export default function PostsList({ posts, HeaderFlatist, navigation }: PostsListProps){
   const { width } = useWindowDimensions();
 
-  const handlePressPost = () => {}
+  const handlePressPost = () => { navigation.navigate("Post")};
 
   return (
     <FlatList 

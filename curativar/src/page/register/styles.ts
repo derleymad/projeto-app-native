@@ -2,11 +2,18 @@ import { IButtonProps } from "native-base";
 
 export const ContainerStyles = {
   alignItems: 'center',
-  paddingTop: '70px',
+  paddingTop: '10px',
   height: 'full',
   fontFamily: 'default',
   fontWeight: 400,
 };
+
+export const BackBoxStyle = {
+  w: "95%", 
+  mt: 4, 
+  mb: 2, 
+  alignItems: "flex-start",
+}
 
 export const InputStyles = {
   variant:"rounded",
@@ -17,6 +24,7 @@ export const InputStyles = {
   fontSize: 16,
   color: 'gray.800',
   borderWidth: 0,
+  _selectedItem: { bg: "teal.600" },
   _dark: {
     bg: 'gray.50',
     _hover: {

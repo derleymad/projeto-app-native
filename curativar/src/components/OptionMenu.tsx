@@ -1,4 +1,4 @@
-import { Box, Menu, Pressable, Switch, Text, View, useColorMode, useTheme } from "native-base";
+import { Box, HStack, Menu, Pressable, Switch, Text, View, useColorMode, useTheme } from "native-base";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useState } from "react";
 
@@ -16,6 +16,11 @@ export default function OptionMenu(){
     }
     
   }
+
+  const handleLogout = () => {
+
+  }
+
   return (
     <View>
       <Box mt={4} mr={4} alignItems="flex-end">
@@ -44,6 +49,9 @@ export default function OptionMenu(){
               onToggle={handleToggle}
               isChecked={switchValue}
             />
+          </Menu.Item>
+          <Menu.Item onPress={handleLogout}>
+            <Text>Logout</Text>
           </Menu.Item>
         </Menu>
       </Box>
