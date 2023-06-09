@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Pressable, Input, Stack, Text, Button, KeyboardAvoidingView, ScrollView } from 'native-base';
-import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
+import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AnchorButtonStyle, AnchorTextStyle, ButtonStyles, ContainerStyles, InputStyles } from './styles';
@@ -11,6 +11,13 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function Login({ navigation }: Props) {
   const [isShowing, setIsShowing] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = () => {
+
+  }
+
   return (
     <ScrollView background='primary.default'>
       <Box
@@ -23,6 +30,7 @@ export default function Login({ navigation }: Props) {
           <Input 
             {...InputStyles}
             placeholder="Email"
+            onChangeText={(email) => setEmail(email)}
             InputLeftElement={
               <FontAwesomeIcons
                 name="user-alt"
@@ -37,6 +45,7 @@ export default function Login({ navigation }: Props) {
             placeholder="Senha"
             paddingLeft={23}
             type={isShowing ? 'text' : 'password'}
+            onChangeText={(password) => setPassword(password)}
             InputRightElement={
               <Pressable onPress={() => setIsShowing(prevState => !prevState)}>
                 <MaterialIcons

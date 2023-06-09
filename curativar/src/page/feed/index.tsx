@@ -12,7 +12,7 @@ export default function Feed({navigation}: Props){
 
   return (
     <Box backgroundColor={dark ? "#121827" : "#EDEFF1" }>
-      <PostsList posts={mockPosts} HeaderFlatist={OptionMenu}/>
+      <PostsList posts={mockPosts} HeaderFlatist={OptionMenu} navigation={navigation}/>
     </Box>
   );
 }

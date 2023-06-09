@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Recover: undefined;
   Authenticated: undefined;
   Post: undefined;
+  Messages: undefined;
 };
 
 export type RootBottomTabParamList = {
