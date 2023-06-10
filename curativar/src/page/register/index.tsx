@@ -10,6 +10,8 @@ import SelectImageInput from "../../components/SelectImageInput";
 import Feather from 'react-native-vector-icons/Feather'
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import axios from "axios";
+import { baseUrl } from "../../config/axios";
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
@@ -46,8 +48,29 @@ export default function Register({navigation}: Props){
     }
   });
 
-  const onSubmit: SubmitHandler<IFormInput> = data => {
-    console.log(data)
+  const onSubmit: SubmitHandler<IFormInput> = async form => {
+    try {
+      const { assets } = imageAssets;
+      console.log(assets);
+      
+      if(!assets) return;
+  
+      const [ file ] = assets;
+      let data = new FormData();
+      data.append('files', { uri: file.uri, name: file.fileName, type: file.type });
+  
+      const imageResponse = await axios.post(`${baseUrl}/upload`, data, {
+        headers: {
+          'Content-Type': `multipart/form-data`,
+        }
+      })
+      console.log(imageResponse.data);
+      
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2));
+      
+    }
+    
   };
 
   return (

@@ -1,10 +1,13 @@
 import { Box, HStack, Menu, Pressable, Switch, Text, View, useColorMode, useTheme } from "native-base";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useState } from "react";
+import { useContext, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../context/authContext";
 
 export default function OptionMenu(){
   const { colorMode, setColorMode } = useColorMode();
   const [switchValue, setSwitchValue] = useState(colorMode === "dark");
+  const { handleLogout } = useContext(AuthContext);
   
   const handleToggle = () => {
     setSwitchValue(!switchValue);
@@ -15,10 +18,6 @@ export default function OptionMenu(){
       setColorMode("light");
     }
     
-  }
-
-  const handleLogout = () => {
-
   }
 
   return (
@@ -50,7 +49,7 @@ export default function OptionMenu(){
               isChecked={switchValue}
             />
           </Menu.Item>
-          <Menu.Item onPress={handleLogout}>
+          <Menu.Item onPress={() => handleLogout ? handleLogout() : null}>
             <Text>Logout</Text>
           </Menu.Item>
         </Menu>

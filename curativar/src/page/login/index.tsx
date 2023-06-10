@@ -1,21 +1,27 @@
-import React, { useState } from 'react';
-import { Box, Pressable, Input, Stack, Text, Button, KeyboardAvoidingView, ScrollView } from 'native-base';
+import React, { useContext, useEffect, useState } from 'react';
+import { Box, Pressable, Input, Stack, Text, Button, KeyboardAvoidingView, ScrollView, Center } from 'native-base';
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AnchorButtonStyle, AnchorTextStyle, ButtonStyles, ContainerStyles, InputStyles } from './styles';
 import Logo from '../../../public/svg/logo.svg';
 import { RootStackParamList } from '../../types/navigation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAxiosInstance } from '../../config/axios';
+import { AuthContext } from '../../context/authContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function Login({ navigation }: Props) {
   const [isShowing, setIsShowing] = useState(false);
-  const [email, setEmail] = useState("");
+  const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
+  const [showError, setShowError] = useState(false);
+  const { handleLogin } = useContext(AuthContext);
 
-  const handleLogin = () => {
-
+  const handlePressLogin = () => {
+    if(!handleLogin) return
+    handleLogin(user, password, setShowError);
   }
 
   return (
@@ -29,8 +35,8 @@ export default function Login({ navigation }: Props) {
         <Stack marginTop={106} space={4}>
           <Input 
             {...InputStyles}
-            placeholder="Email"
-            onChangeText={(email) => setEmail(email)}
+            placeholder="Usuário ou Email"
+            onChangeText={(user) => setUser(user)}
             InputLeftElement={
               <FontAwesomeIcons
                 name="user-alt"
@@ -58,6 +64,12 @@ export default function Login({ navigation }: Props) {
             }
           />
 
+          { showError ?
+            <Center>
+              <Text fontFamily="default" color="red.600" fontWeight={700}>Email ou senha incorretos</Text>
+            </Center>
+          : null}
+
           <Button
             {...ButtonStyles}
             rightIcon={
@@ -71,7 +83,7 @@ export default function Login({ navigation }: Props) {
                 
               />
             }
-            onPress={() => navigation.navigate("Authenticated")}
+            onPress={handlePressLogin}
           >
             Log-in
           </Button>
