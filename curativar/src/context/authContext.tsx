@@ -1,12 +1,12 @@
-import { ReactNode, createContext, useEffect, useState } from "react";
-import { getAxiosInstance } from "../config/axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createContext } from "react";
+import { THandleCreateAccountDTO, THandleLoginDTO } from "../types/useAuth";
 
 interface AuthContextProps{
   token?: string | null;
   setToken?: React.Dispatch<React.SetStateAction<string | null>>;
-  handleLogin?: (user: string, password: string, setShowError: React.Dispatch<React.SetStateAction<boolean>>) => Promise<void>
+  handleLogin?: (loginProps: THandleLoginDTO) => Promise<void>
   handleLogout?: () => Promise<void>;
+  handleCreateAccount?: (createProps: THandleCreateAccountDTO) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextProps>({});

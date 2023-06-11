@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {NativeBaseProvider} from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,57 +9,31 @@ import Recover from './src/page/recover';
 import { RootStackParamList } from './src/types/navigation';
 import Authenticated from './Authenticated';
 import Post from './src/page/post';
-import Messages from './src/page/messages/intex';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import Messages from './src/page/messages';
 import { AuthContext } from './src/context/authContext';
-import { getAxiosInstance } from './src/config/axios';
+import useAuth from './src/hooks/useAuth';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const [token, setToken] = useState<string | null>(null);
-  console.log(token);
-
-  useEffect(() => {
-    const getToken = async () => {
-      const userToken = await AsyncStorage.getItem('userToken');
-      setToken(userToken);
-    }
-
-    getToken();
-  },[]);
-
-  const handleLogin = async (user: string, password: string, setShowError: React.Dispatch<React.SetStateAction<boolean>>) => {
-    try {
-      if(user && password){
-        if(!setToken) return
-
-        setShowError(false);
-        const axiosInstance = await getAxiosInstance();
-        const response = await axiosInstance.post("/auth/local", {
-          identifier: user,
-          password: password
-        });
-        
-        await AsyncStorage.setItem('userToken', response.data.jwt);
-
-        setToken(response.data.jwt);
-      }
-    } catch (error) {
-      setShowError(true);
-      console.log(error);
-    }
-  }
-
-  const handleLogout = async () => {
-    AsyncStorage.removeItem('userToken');
-    setToken(null);
-  }
+  const {
+    token,
+    handleLogin,
+    handleLogout,
+    setToken,
+    handleCreateAccount,
+  } = useAuth();
 
   return (
     <NativeBaseProvider theme={theme}>
       <NavigationContainer>
-        <AuthContext.Provider value={{token, setToken, handleLogin, handleLogout}}>
+        <AuthContext.Provider value={{
+          token,
+          setToken,
+          handleLogin,
+          handleLogout,
+          handleCreateAccount
+        }}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {!token ? 
               <>

@@ -4,7 +4,7 @@ import { ImagePickerResponse } from 'react-native-image-picker';
 import { Avatar, Box, Button, Input, Pressable, ScrollView, Stack, Text } from "native-base";
 import { BackBoxStyle, ButtonStyles, ContainerStyles, InputStyles } from "./styles";
 import { Select } from "native-base";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
 import SelectImageInput from "../../components/SelectImageInput";
 import Feather from 'react-native-vector-icons/Feather'
@@ -12,6 +12,8 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import axios from "axios";
 import { baseUrl } from "../../config/axios";
+import { AuthContext } from "../../context/authContext";
+import Snackbar from 'react-native-snackbar';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
@@ -35,8 +37,9 @@ function ProfileIcon(){
 
 export default function Register({navigation}: Props){
   const [isShowing, setIsShowing] = useState(false);
-  const [accountType, setAccountType] = useState('med');
   const [imageAssets, setImageAssets] =  useState<ImagePickerResponse>({});
+
+  const { handleCreateAccount } = useContext(AuthContext);
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -48,29 +51,56 @@ export default function Register({navigation}: Props){
     }
   });
 
-  const onSubmit: SubmitHandler<IFormInput> = async form => {
+  const handleSendImage = async () => {
+    const { assets } = imageAssets;
+      
+    if(!assets) return;
+    const [ file ] = assets;
+    let formData = new FormData();
+    formData.append('files', { uri: file.uri, name: file.fileName, type: file.type });
+
     try {
-      const { assets } = imageAssets;
-      console.log(assets);
-      
-      if(!assets) return;
-  
-      const [ file ] = assets;
-      let data = new FormData();
-      data.append('files', { uri: file.uri, name: file.fileName, type: file.type });
-  
-      const imageResponse = await axios.post(`${baseUrl}/upload`, data, {
+      const { data } = await axios.post(`${baseUrl}/upload`, formData, {
         headers: {
-          'Content-Type': `multipart/form-data`,
+          'Content-Type': 'multipart/form-data',
         }
-      })
-      console.log(imageResponse.data);
-      
-    } catch (error) {
-      console.log(JSON.stringify(error, null, 2));
-      
+      });
+  
+      return data;
+    } catch(error) {
+      console.error(error);
+      return null;
     }
-    
+  }
+
+  const onSubmit: SubmitHandler<IFormInput> = async form => {
+    const [image] = await handleSendImage();
+
+    const onError = () => {
+      Snackbar.show({
+        text: 'Algo deu errado na criação da sua conta!',
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    }
+
+    const handleDivergentPassword = () => {
+      Snackbar.show({
+        text: 'As senhas não são iguais',
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    }
+
+    if (!handleCreateAccount) {
+      onError();
+      return
+    }
+
+    await handleCreateAccount({
+      form,
+      handleDivergentPassword,
+      imageId: String(image.id),
+      onError,
+    })
   };
 
   return (

@@ -21,7 +21,11 @@ export default function Login({ navigation }: Props) {
 
   const handlePressLogin = () => {
     if(!handleLogin) return
-    handleLogin(user, password, setShowError);
+    handleLogin({
+      user,
+      password,
+      setShowError,
+    });
   }
 
   return (

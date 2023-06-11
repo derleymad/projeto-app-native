@@ -1,7 +1,14 @@
-import { Box, HStack, Menu, Pressable, Switch, Text, View, useColorMode, useTheme } from "native-base";
+import {
+  Box,
+  Menu,
+  Pressable,
+  Switch,
+  Text,
+  View,
+  useColorMode,
+} from "native-base";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useContext, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../context/authContext";
 
 export default function OptionMenu(){

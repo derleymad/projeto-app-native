@@ -98,7 +98,8 @@ export default function Interactions({navigation}: Props){
                 </Box>
               </Box>
             </Box>
-          } 
+          }
+          navigation={navigation}
         />
     </Box>
   );
