@@ -39,7 +39,7 @@ export default function Login({ navigation }: Props) {
         <Stack marginTop={106} space={4}>
           <Input 
             {...InputStyles}
-            placeholder="Usuário ou Email"
+            placeholder="Email"
             onChangeText={(user) => setUser(user)}
             InputLeftElement={
               <FontAwesomeIcons

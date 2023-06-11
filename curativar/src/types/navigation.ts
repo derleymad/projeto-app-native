@@ -3,7 +3,7 @@ export type RootStackParamList = {
   Register: undefined;
   Recover: undefined;
   Authenticated: undefined;
-  Post: undefined;
+  Post: {postId: number};
   Messages: undefined;
 };
 

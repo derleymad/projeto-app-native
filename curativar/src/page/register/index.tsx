@@ -35,6 +35,13 @@ function ProfileIcon(){
   );
 }
 
+const TranslateEmptyFields: {[key:string]: string} = {
+  name: "nome",
+  email: "email",
+  password: "senha",
+  confirmPassword: "confirmar senha",
+}
+
 export default function Register({navigation}: Props){
   const [isShowing, setIsShowing] = useState(false);
   const [imageAssets, setImageAssets] =  useState<ImagePickerResponse>({});
@@ -74,8 +81,6 @@ export default function Register({navigation}: Props){
   }
 
   const onSubmit: SubmitHandler<IFormInput> = async form => {
-    const [image] = await handleSendImage();
-
     const onError = () => {
       Snackbar.show({
         text: 'Algo deu errado na criação da sua conta!',
@@ -90,15 +95,31 @@ export default function Register({navigation}: Props){
       });
     }
 
+    const emptyField = Object.entries(form).filter(([,value]) => value === "").map(([key]) => TranslateEmptyFields[key]);
+    
+    if(emptyField.length > 0 ) {
+      const fields = emptyField.join(", ");
+      const text = emptyField.length > 1 ? `Os campos ${fields} estão vazios` : `O campo ${fields} está vazio`;
+      Snackbar.show({
+        text,
+        duration: Snackbar.LENGTH_SHORT,
+      });
+      return
+    }
+  
     if (!handleCreateAccount) {
       onError();
       return
     }
 
+    const images = await handleSendImage();
+
+    const imageId = images ? images[0].id : null
+
     await handleCreateAccount({
       form,
       handleDivergentPassword,
-      imageId: String(image.id),
+      imageId,
       onError,
     })
   };
@@ -118,27 +139,29 @@ export default function Register({navigation}: Props){
 
         <Text fontFamily={"default"} fontWeight={700} fontSize={30} color="secondary.default">Cadastro</Text>
 
-        <SelectImageInput setImageAssets={setImageAssets}>
-          <Box position="relative">
-            {imageAssets.assets ?
-              imageAssets.assets?.map((asset) => (
-                <Avatar key={asset.uri} size={150} bgColor="gray.50" my={34} source={{
-                  uri: asset.uri
-                }} />
-              )) : 
-              <Avatar size={150} bgColor="gray.50" my={34}>
-                <ProfileIcon />
-              </Avatar> 
-            }
-            <Avatar size={45} bgColor="gray.800" my={34} position="absolute" bottom={0} right={0}>
-              <FontAwesomeIcons
-                name="pen"
-                color="#EDEFF1"
-                size={20}
-              /> 
-            </Avatar>
-          </Box>
-        </SelectImageInput>
+        <Box width={150}>
+          <SelectImageInput setImageAssets={setImageAssets}>
+            <Box position="relative">
+              {imageAssets.assets ?
+                imageAssets.assets?.map((asset) => (
+                  <Avatar key={asset.uri} size={150} bgColor="gray.50" my={34} source={{
+                    uri: asset.uri
+                  }} />
+                )) : 
+                <Avatar size={150} bgColor="gray.50" my={34}>
+                  <ProfileIcon />
+                </Avatar> 
+              }
+              <Avatar size={45} bgColor="gray.800" my={34} position="absolute" bottom={0} right={0}>
+                <FontAwesomeIcons
+                  name="pen"
+                  color="#EDEFF1"
+                  size={20}
+                /> 
+              </Avatar>
+            </Box>
+          </SelectImageInput>
+        </Box>
         
         <Stack space={4}>
           <Controller

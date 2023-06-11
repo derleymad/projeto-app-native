@@ -6,12 +6,13 @@ const axiosInstance = axios.create({ baseURL: baseUrl });
 
 export async function getAxiosInstance(){
   try {
-    const token = await AsyncStorage.getItem("userToken");
-
-    if(token !== null) {
-      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    const user = await AsyncStorage.getItem("user");
+    
+    if(user !== null) {
+      const parseUser = JSON.parse(user);
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${parseUser.token}`;
     }
-
+    
     return axiosInstance
   } catch(e) {
     return axiosInstance

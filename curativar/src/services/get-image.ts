@@ -5,7 +5,6 @@ export async function getImage(imageId: string) {
 
   try {
     const { data } = await axios.get(`upload/files/${imageId}`);
-    console.log('data =>>', data);
 
     return data;
   } catch(error) {

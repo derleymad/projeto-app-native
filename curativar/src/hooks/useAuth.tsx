@@ -3,36 +3,45 @@ import { useEffect, useState } from "react";
 import { THandleCreateAccountDTO, THandleLoginDTO } from "../types/useAuth";
 import { baseUrl, getAxiosInstance } from "../config/axios";
 import axios from "axios";
+import { IAuthUser } from "../types/user";
 
 export default function useAuth() {
-  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<IAuthUser | null>(null);
 
   useEffect(() => {
     const getToken = async () => {
-      const userToken = await AsyncStorage.getItem('userToken');
-      setToken(userToken);
+      const userData = await AsyncStorage.getItem('user');
+
+      const userObject = userData ? JSON.parse(userData) : null;
+
+      setUser(userObject);
     }
 
     getToken();
   },[]);
 
-  const handleLogin = async ({ user, password, setShowError }: THandleLoginDTO) => {
+  const handleLogin = async ({ user: email, password, setShowError }: THandleLoginDTO) => {
     try {
-      if(user && password){
-        if(!setToken) return
+      if(email && password){
+        if(!setUser) return
 
         setShowError(false);
-        const axiosInstance = await getAxiosInstance();
-        const { data } = await axiosInstance.post("/auth/local", {
-          identifier: user,
+        const { data } = await axios.post(`${baseUrl}/auth/local`, {
+          identifier: email,
           password: password
         });
 
-        const { jwt } = data;
-        
-        await AsyncStorage.setItem('userToken', jwt);
+        const { jwt, user } = data;
 
-        setToken(jwt);
+        const currentUser = {
+          token: jwt,
+          name: user.name,
+          id: user.id 
+        }
+        
+        await AsyncStorage.setItem('user', JSON.stringify(currentUser));
+
+        setUser(currentUser);
       }
     } catch (error) {
       setShowError(true);
@@ -41,8 +50,8 @@ export default function useAuth() {
   }
 
   const handleLogout = async () => {
-    AsyncStorage.removeItem('userToken');
-    setToken(null);
+    await AsyncStorage.removeItem('user');
+    setUser(null);
   }
 
   const handleCreateAccount = async ({
@@ -71,12 +80,21 @@ export default function useAuth() {
         email,
         type,
         password,
-        image_id: imageId,
+        profile_pic: imageId,
       };
 
       const { data } = await axios.post(`${baseUrl}/auth/local/register`, body);
-      const { jwt } = data;
-      setToken(jwt);
+      const { jwt, user } = data;
+
+      const currentUser = {
+        token: jwt,
+        name: user.name,
+        id: user.id 
+      }
+
+      await AsyncStorage.setItem('user', JSON.stringify(currentUser));
+
+      setUser(currentUser);
     } catch (error) {
       console.error(JSON.stringify(error, null, 2));
       onError();
@@ -84,8 +102,8 @@ export default function useAuth() {
   }
 
   return {
-    token,
-    setToken,
+    user,
+    setUser,
     handleLogin,
     handleLogout,
     handleCreateAccount,

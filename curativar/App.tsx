@@ -17,10 +17,10 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   const {
-    token,
+    user,
     handleLogin,
     handleLogout,
-    setToken,
+    setUser,
     handleCreateAccount,
   } = useAuth();
 
@@ -28,14 +28,14 @@ export default function App() {
     <NativeBaseProvider theme={theme}>
       <NavigationContainer>
         <AuthContext.Provider value={{
-          token,
-          setToken,
+          user,
+          setUser,
           handleLogin,
           handleLogout,
           handleCreateAccount
         }}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {!token ? 
+            {!user ? 
               <>
                 <Stack.Screen name="Login" component={Login} options={{ }}/>
                 <Stack.Screen name="Register" component={Register} options={{ }}/>
