@@ -54,7 +54,7 @@ export default function PostsList({ posts, HeaderFlatist, navigation }: PostsLis
                     bg="green.500" 
                     alignSelf="center" 
                     size="sm" 
-                    source={{ uri: `${baseUrl}/${attributes.users_permissions_user.data.attributes.profile_pic.data.formats.small.url}` }}
+                    source={{ uri: `${baseUrl.replace("/api", "")}${attributes.users_permissions_user.data.attributes.profile_pic.data.attributes.formats.small.url}` }}
                   >
                     W
                   </Avatar>

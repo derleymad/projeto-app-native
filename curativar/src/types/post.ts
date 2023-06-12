@@ -12,7 +12,7 @@ export interface IPost {
       "data": {
         "id": number,
         "attributes": {
-          "profile_pic": {data: IPicture},
+          "profile_pic": {data: {id: number, attributes: Omit<IPicture, "id"> }},
           "name": string
         }
       }

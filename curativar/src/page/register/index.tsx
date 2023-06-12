@@ -14,6 +14,7 @@ import axios from "axios";
 import { baseUrl } from "../../config/axios";
 import { AuthContext } from "../../context/authContext";
 import Snackbar from 'react-native-snackbar';
+import { postImage } from "../../services/post-image";
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
@@ -58,28 +59,6 @@ export default function Register({navigation}: Props){
     }
   });
 
-  const handleSendImage = async () => {
-    const { assets } = imageAssets;
-      
-    if(!assets) return;
-    const [ file ] = assets;
-    let formData = new FormData();
-    formData.append('files', { uri: file.uri, name: file.fileName, type: file.type });
-
-    try {
-      const { data } = await axios.post(`${baseUrl}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      });
-  
-      return data;
-    } catch(error) {
-      console.error(error);
-      return null;
-    }
-  }
-
   const onSubmit: SubmitHandler<IFormInput> = async form => {
     const onError = () => {
       Snackbar.show({
@@ -112,7 +91,7 @@ export default function Register({navigation}: Props){
       return
     }
 
-    const images = await handleSendImage();
+    const images = await postImage(imageAssets);
 
     const imageId = images ? images[0].id : null
 

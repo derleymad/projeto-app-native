@@ -14,8 +14,6 @@ export default function Feed({navigation}: Props){
   const { colorMode } = useColorMode();
   const dark = colorMode === "dark";
   const [posts, setPosts] = useState<IPost[]>([]);
-  console.log(posts);
-  
 
   useEffect(() => {
     getPosts().then(

@@ -22,7 +22,6 @@ const TranslateSex: {[key:string]: string} = {
 export default function Post({route, navigation}: Props){
   const { postId } = route.params;
   const [post, setPost] = useState<IPost| null>(null);
-  console.log(postId);
 
   useEffect(() => {
     if(!postId) return
@@ -66,7 +65,7 @@ export default function Post({route, navigation}: Props){
                   <Avatar 
                     {...AvatarStyles} 
                     bg="green.500" 
-                    source={{ uri: `${baseUrl.replace("/api", "")}${post.attributes.users_permissions_user.data.attributes.profile_pic.data.formats.thumbnail.url}`}}
+                    source={{ uri: `${baseUrl.replace("/api", "")}${post.attributes.users_permissions_user.data.attributes.profile_pic.data.attributes.formats.thumbnail.url}`}}
                   >
                     W
                   </Avatar>

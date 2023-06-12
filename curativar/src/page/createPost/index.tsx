@@ -3,25 +3,42 @@ import { RootBottomTabParamList } from "../../types/navigation";
 import {
   Box,
   Button,
+  Image,
   Input,
   ScrollView,
   Select,
   Text,
   TextArea,
   useColorMode,
-  useTheme,
 } from "native-base";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Styles from "./styles";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useContext } from "react";
 import { ImagePickerResponse } from "react-native-image-picker";
 import SelectImageInput from "../../components/SelectImageInput";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { TextInputMask } from "react-native-masked-text";
+import { getAxiosInstance } from "../../config/axios";
+import { useWindowDimensions } from "react-native";
+import Snackbar from "react-native-snackbar";
+import { postImage } from "../../services/post-image";
+import { AuthContext } from "../../context/authContext";
+import { postPost } from "../../services/post-post";
 
 type Props = NativeStackScreenProps<RootBottomTabParamList, 'CreatePost'>;
 
+const TranslateEmptyFields: {[key:string]: string} = {
+  description: 'descrição',
+  cpf: 'cpf',
+  name: 'nome',
+  phone: 'telefone',
+  age: 'idade',
+  sex: 'sexo',
+}
+
 interface IFormInput {
+  patient_id: number | null,
   description: string,
   cpf: string,
   name: string,
@@ -31,28 +48,138 @@ interface IFormInput {
 };
 
 export default function CreatePost(){
+  const { width } = useWindowDimensions();
   const { colorMode } = useColorMode();
-  const [imageAssets, setImageAssets] =  useState<ImagePickerResponse>({});
   const getDefaultColor = useCallback((isText = false) => {
     const isDarkMode = colorMode === 'dark';
     const isDarkColor = !isDarkMode && isText || isDarkMode && !isText;
 
     return isDarkColor ? 'secondary.default' : 'gray.50';
   }, [colorMode])
+  const [imageAssets, setImageAssets] =  useState<ImagePickerResponse>({});
+  const [disableFields, setDisableFields] = useState(true);
+  const [patientExists, setPatientExists] = useState(false);
+  const { user } = useContext(AuthContext);
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setValue, reset } = useForm({
     defaultValues: {
+      patient_id: null,
       description: '',
       cpf: '',
       name: '',
       phone: '',
       age: '',
       sex: '',
-    }
+    },
   });
 
   const onSubmit: SubmitHandler<IFormInput> = async form => {
-    console.log(form);
+    if(!imageAssets.assets){
+      Snackbar.show({
+        text: "É obrigatório adicionar imagem",
+        duration: Snackbar.LENGTH_SHORT,
+      });
+      return
+    }
+
+    const emptyField = Object.entries(form)
+                        .filter(([,value]) => value === "")
+                        .map(([key]) => TranslateEmptyFields[key]);
+    
+    if(emptyField.length > 0 ) {
+      const fields = emptyField.join(", ");
+      const text = emptyField.length > 1 
+        ? `Os campos ${fields} estão vazios` 
+        : `O campo ${fields} está vazio`;
+
+      Snackbar.show({
+        text,
+        duration: Snackbar.LENGTH_SHORT,
+      });
+      return
+    }
+
+    const images = await postImage(imageAssets);
+
+    const postError = () => {
+      Snackbar.show({
+        text: "Não foi possível criar o post. Tente novamente!",
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    }
+
+    if(!images){
+      postError();
+      return
+    }
+
+    try {
+      const axiosInstance = await getAxiosInstance();
+      let postResponse: any = null; 
+
+      if(!patientExists){
+        const patientResponse = await axiosInstance.post("/patients", {
+          data:{
+            name: form.name,
+            cpf: form.cpf,
+            phone: form.phone,
+            age: form.age,
+            sex: form.sex
+          }
+        }) 
+        postResponse = await postPost({
+          description: form.description, 
+          userId: Number(user?.id), 
+          imageId: images[0].id,
+          patient_id: patientResponse.data.data.id
+        })
+      }
+      else{
+        postResponse = await postPost({
+          description: form.description, 
+          userId: Number(user?.id), 
+          imageId: images[0].id,
+          patient_id: Number(form.patient_id),
+        })
+      }
+    } catch (error) {
+      console.log(error);
+      postError();
+      return
+    }
+  }
+
+  const getPatient = async (cpf: string) => {
+    try {
+      const axiosInstance = await getAxiosInstance();
+      const patientResponse = await axiosInstance.get(`patients?filters[cpf][$eq]=${cpf}`);
+      const patient = patientResponse.data.data[0];
+
+      if(!patient) {
+        setDisableFields(false);
+        setPatientExists(false);
+        setValue("name", "");
+        setValue("phone", "");
+        setValue("age", "");
+        setValue("sex", "");
+        setValue("patient_id", null);
+        return
+      }
+    
+      const { name, phone, age, sex } = patientResponse.data.data[0].attributes;
+
+      setValue("name", name);
+      setValue("phone", phone);
+      setValue("age", String(age));
+      setValue("sex", sex);
+      setValue("patient_id",  patientResponse.data.data[0].id);
+      
+      setPatientExists(true);
+      setDisableFields(false);
+    } catch (error) {
+      setPatientExists(false);
+      console.log(error);   
+    }
   }
 
   return (
@@ -60,14 +187,39 @@ export default function CreatePost(){
       <Box {...Styles.box} bg={getDefaultColor()}>
           <Text {...Styles.h1} color={getDefaultColor(true)}>Nova Publicação</Text>
           <SelectImageInput setImageAssets={setImageAssets}>
-            <Box {...Styles.imageInput}>
-              <MaterialIcons {...Styles.imageIcon}/>
-              <Box {...Styles.addButton}>
-                <AntDesign {...Styles.addIcon}/>
+              <Box {...Styles.imageInput}>
+                {imageAssets.assets ? (
+                  <Image
+                    style={{ borderRadius: 17, height: 277, width: width }}
+                    source={{
+                      uri: `${imageAssets.assets[0].uri}`
+                    }} 
+                    alt="Foto do post"
+                  />
+                )
+                : (
+                  <MaterialIcons {...Styles.imageIcon}/>
+                )}
+                <Box {...Styles.addButton}>
+                  <AntDesign {...Styles.addIcon}/>
+                </Box>
               </Box>
-            </Box>
           </SelectImageInput>
-          <TextArea {...Styles.area} />
+
+          <Controller
+            name="description"
+            control={control}
+            render={
+              ({ field }) => (
+                <TextArea 
+                  {...Styles.area} 
+                  value={field.value}
+                  onChangeText={(text) => field.onChange(text)}
+                />
+              )
+            }
+          />
+          
           <Box {...Styles.inputsContainer}>
             <Text {...Styles.h2} color={getDefaultColor(true)}>Paciente</Text>
 
@@ -76,10 +228,25 @@ export default function CreatePost(){
               control={control}
               render={
                 ({ field }) => (
-                  <Input 
-                    {...Styles.input} 
-                    onChangeText={(text) => field.onChange(text)}
-                    placeholder="CPF do paciente" 
+                  <TextInputMask
+                    type={'cpf'}
+                    value={field.value}
+                    customTextInput={Input}
+                    onChangeText={(text) => {
+                      if(text.length === 14) {
+                        setDisableFields(true);
+                        getPatient(text);
+                      } else {
+                        setPatientExists(false);
+                        setDisableFields(true)
+                      }
+                      field.onChange(text)
+                    }}
+                    customTextInputProps={{
+                      ...Styles.input,
+                      maxLength: 14,
+                      placeholder: "CPF do paciente",
+                    }}
                   />
                 )
               }
@@ -92,8 +259,10 @@ export default function CreatePost(){
                 ({ field }) => (
                   <Input 
                     {...Styles.input} 
+                    value={field.value}
                     onChangeText={(text) => field.onChange(text)}
-                    placeholder="Nome completo do paciente" 
+                    placeholder="Nome completo do paciente"
+                    isDisabled = {disableFields}
                   />
                 )
               }
@@ -104,10 +273,17 @@ export default function CreatePost(){
               control={control}
               render={
                 ({ field }) => (
-                  <Input 
-                    {...Styles.input} 
-                    onChangeText={(text) => field.onChange(text)}
-                    placeholder="Telefone do paciente" 
+                  <TextInputMask
+                    type={'cel-phone'}
+                    value={field.value}
+                    customTextInput={Input}
+                    onChangeText={(text) => field.onChange(text.replace(" ",""))}
+                    customTextInputProps={{
+                      ...Styles.input,
+                      maxLength: 15,
+                      placeholder: "Telefone do paciente",
+                      isDisabled: disableFields
+                    }}
                   />
                 )
               }
@@ -127,7 +303,9 @@ export default function CreatePost(){
                         flex: 1,
                         placeholder: "Idade"
                       }}
+                      value={field.value}
                       onChangeText={(text) => field.onChange(text)}
+                      isDisabled = {disableFields}
                     />
                   )
                 }
@@ -150,6 +328,7 @@ export default function CreatePost(){
                       mt={1}
                       flex={1}
                       onValueChange={itemValue => field.onChange(itemValue)}
+                      isDisabled={disableFields}
                     >
                       <Select.Item label="Masculino" value="masculine" />
                       <Select.Item label="Feminino" value="feminine" />

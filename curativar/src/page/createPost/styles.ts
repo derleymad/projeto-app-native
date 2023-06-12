@@ -80,6 +80,7 @@ const Styles: TStylesProps = {
     marginTop: 26,
     placeholder: 'Descrição',
     color: 'gray.800',
+    fontSize: "4rem",
   },
   input: {
     color: 'gray.800',
@@ -87,6 +88,7 @@ const Styles: TStylesProps = {
     borderRadius: 20,
     borderWidth: 0,
     marginBottom: 5,
+    fontSize: "4rem"
   },
   inputsContainer: {
     width: '100%',
@@ -98,6 +100,7 @@ const Styles: TStylesProps = {
     color: 'gray.800',
     borderWidth: 0,
     bg: 'gray.300',
+    fontSize: "4rem",
   },
   containerBottom: {
     width: '100%',

@@ -1,12 +1,16 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootBottomTabParamList } from "../../types/navigation";
-import SelectImageInput from "../../components/SelectImageInput";
-import { Avatar, Box, HStack, Image, ScrollView, Text, useColorMode, useTheme } from "native-base";
+import { RootStackParamList } from "../../types/navigation";
+import { Avatar, Box, Image, Pressable, ScrollView, Text, useColorMode, useTheme } from "native-base";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
 import { useWindowDimensions } from "react-native";
 import OptionMenu from "../../components/OptionMenu";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../context/authContext";
+import { getUserPosts } from "../../services/get-user-posts";
+import { IPost } from "../../types/post";
+import { baseUrl, getAxiosInstance } from "../../config/axios";
 
-type Props = NativeStackScreenProps<RootBottomTabParamList, 'Profile'>;
+type Props = NativeStackScreenProps<RootStackParamList>;
 
 function ProfileIcon(){
   return (
@@ -19,10 +23,36 @@ function ProfileIcon(){
 }
 
 export default function Profile({navigation}: Props){
-  const { colors } = useTheme();
   const { colorMode } = useColorMode();
-  const { width, height } = useWindowDimensions();
   const dark = colorMode === "dark";
+  const { user } = useContext(AuthContext);
+  const [posts, setPosts] = useState<IPost[]>([]); 
+  const [userPic, setUserPic] = useState<string | null>(null); 
+
+  useEffect(() => {
+    if(!user) return
+
+    const getData = async () => {
+      try {
+        const postsResponse = await getUserPosts(user.id);
+        const axiosInstance = await getAxiosInstance();
+        const userResponse = await axiosInstance.get(`/users/${user.id}?populate=profile_pic`);
+
+        if(userResponse.data.profile_pic){
+          setUserPic(userResponse.data.profile_pic.formats.small.url);
+        }
+        setPosts(postsResponse);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    getData();
+  },[user]);
+  
+  const handlePressPost = (id: number) => { 
+    navigation.navigate("Post", { postId: id }) 
+  };
 
   return (
     <ScrollView bgColor={ dark ? "secondary.default" : "gray.50" }>
@@ -32,9 +62,9 @@ export default function Profile({navigation}: Props){
         p={10}
       >
         <Box position="relative">
-          {mockUserData.photo ?
+          {userPic ?
             <Avatar size={150} bgColor="gray.50" my={34} source={{
-              uri: mockUserData.photo
+              uri: `${baseUrl.replace("/api", "")}${userPic}`
             }} /> : 
             <Avatar size={150} bgColor="gray.50" my={34}>
               <ProfileIcon />
@@ -42,22 +72,23 @@ export default function Profile({navigation}: Props){
           }
         </Box>
 
-        <Text fontFamily={"default"} fontWeight={700} fontSize={24} color={dark ? "gray.50" : "secondary.default" }>{mockUserData.name}</Text>
+        <Text fontFamily={"default"} fontWeight={700} fontSize={24} color={dark ? "gray.50" : "secondary.default" }>{user?.name}</Text>
 
         <Box alignItems={"center"} mt={20}>
           <Text fontFamily={"default"} fontWeight={700} fontSize={24} mb={5} color={dark ? "gray.50" : "secondary.default" }>Publicações</Text>
 
           <Box flexDir={"row"} flexWrap={"wrap"} justifyContent={"center"} style={{gap: 15}}>
-            {mockUserData.posts.map((post)=>(  
+            {posts.map((post)=>(  
+              <Pressable key={post.id} onPress={()=>{handlePressPost(post.id)}}>
                 <Image
-                  key={post.id}
                   style={{ borderRadius: 20, height: 150, width: 150 }}
                   source={{
-                    uri: post.uri
+                    uri: `${baseUrl.replace("/api", "")}${post.attributes.image.data.attributes.formats.small.url}`
                   }} 
                   alt="Publicação" 
                   size="xl" 
                 />
+              </Pressable>
               ))
             }
           </Box>
@@ -65,24 +96,4 @@ export default function Profile({navigation}: Props){
       </Box>
     </ScrollView>
   );
-}
-
-const mockUserData = {
-  id: "123",
-  name: "Dra. Ana Paula Cavalcante",
-  photo: "https://global-uploads.webflow.com/5f7c5ad0f02de81be2e6417c/62b4adb7e2186b553accde4e_criterios-escolha-residencia-medica.jpg",
-  posts: [
-    {
-      id: "123",
-      uri: "https://www.suprevida.com.br/fotos/Imagem-queimadura2124964.jpg",
-    },
-    {
-      id: "456",
-      uri: "https://www.suprevida.com.br/fotos/Imagem-queimadura2124964.jpg",
-    },
-    {
-      id: "789",
-      uri: "https://www.suprevida.com.br/fotos/Imagem-queimadura2124964.jpg",
-    },
-  ]
 }

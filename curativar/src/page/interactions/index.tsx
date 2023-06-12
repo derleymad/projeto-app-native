@@ -29,8 +29,9 @@ export default function Interactions({navigation}: Props){
 
   return (
     <Box backgroundColor={ dark ? "#121827" : "#EDEFF1" }>
-        <PostsList 
+        {/* <PostsList 
           posts={mockPosts} 
+          naviga
           HeaderFlatist={
             <Box>
               <OptionMenu />
@@ -100,7 +101,7 @@ export default function Interactions({navigation}: Props){
             </Box>
           }
           navigation={navigation}
-        />
+        /> */}
     </Box>
   );
 }
@@ -122,41 +123,3 @@ const monthsOfYear = [
   'Dezembro'
 ];
 
-const mockPosts = [
-  {
-    id: "123",
-    title: "Post 1",
-    uri: "https://wallpaperaccess.com/full/317501.jpg",
-    postCreator: {
-      name: "Dr. Antonio Alves Pereira",
-      uri: null,
-    },
-  },
-  {
-    id: "456",
-    title: "Post 2",
-    uri: "https://wallpaperaccess.com/full/317501.jpg",
-    postCreator: {
-      name: "Dra. Maria Cavalcante Barroso",
-      uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
-    },
-  },
-  {
-    id: "789",
-    title: "Post 3",
-    uri: "https://wallpaperaccess.com/full/317501.jpg",
-    postCreator: {
-      name: "Dr. Italo Renan",
-      uri: null,
-    },
-  },
-  {
-    id: "741",
-    title: "Post 4",
-    uri: "https://wallpaperaccess.com/full/317501.jpg",
-    postCreator: {
-      name: "Dra. Eduada Amorim",
-      uri: null,
-    },
-  },
-]

@@ -12,8 +12,6 @@ export const getPost = async (id: number) => {
         }
       }
     );
-
-    console.log(JSON.stringify(postsResponse.data, null, 2));
     
     return postsResponse.data.data
   } catch (error) {
