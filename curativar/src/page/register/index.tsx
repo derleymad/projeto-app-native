@@ -1,20 +1,17 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types/navigation";
 import { ImagePickerResponse } from 'react-native-image-picker';
-import { Avatar, Box, Button, Input, Pressable, ScrollView, Stack, Text } from "native-base";
-import { BackBoxStyle, ButtonStyles, ContainerStyles, InputStyles } from "./styles";
-import { Select } from "native-base";
+import { Avatar, Box, Button, Input, Pressable, ScrollView, Stack, Text , Select } from "native-base";
 import { useContext, useState } from "react";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
-import SelectImageInput from "../../components/SelectImageInput";
 import Feather from 'react-native-vector-icons/Feather'
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import axios from "axios";
-import { baseUrl } from "../../config/axios";
-import { AuthContext } from "../../context/authContext";
 import Snackbar from 'react-native-snackbar';
-import { postImage } from "../../services/post-image";
+import { AuthContext } from "../../context/authContext";
+import { BackBoxStyle, ButtonStyles, ContainerStyles, InputStyles } from "./styles";
+import SelectImageInput from "../../components/SelectImageInput";
+import { RootStackParamList } from "../../types/navigation";
+import postImage from "../../services/post-image";
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
@@ -116,7 +113,7 @@ export default function Register({navigation}: Props){
           </Button>
         </Box>
 
-        <Text fontFamily={"default"} fontWeight={700} fontSize={30} color="secondary.default">Cadastro</Text>
+        <Text fontFamily="default" fontWeight={700} fontSize={30} color="secondary.default">Cadastro</Text>
 
         <Box width={150}>
           <SelectImageInput setImageAssets={setImageAssets}>

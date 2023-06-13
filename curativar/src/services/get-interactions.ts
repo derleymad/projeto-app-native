@@ -1,6 +1,6 @@
 import { getAxiosInstance } from "../config/axios";
 
-export const getInteractions = async (page: number, userId: number) => {
+const getInteractions = async (page: number, userId: number) => {
   try {
     const axios = await getAxiosInstance();
     const postsResponse = await axios.get(
@@ -19,7 +19,6 @@ export const getInteractions = async (page: number, userId: number) => {
     
     return postsResponse.data
   } catch (error) {
-    console.log(error);
     return {
       data: [], 
       meta: {
@@ -33,3 +32,5 @@ export const getInteractions = async (page: number, userId: number) => {
     }
   }
 }
+
+export default getInteractions;

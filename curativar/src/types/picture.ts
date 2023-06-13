@@ -5,9 +5,9 @@ interface IPictureFormat {
   "url": string
 };
 
-type TFormatKeys = "thumbnail" | "medium" | "small";
+export type TFormatKeys = "thumbnail" | "medium" | "small";
 
-type TFormats = Record<TFormatKeys, IPictureFormat>;
+export type TFormats = Record<TFormatKeys, IPictureFormat>;
 
 export interface IPicture extends IPictureFormat{
   "id": number,

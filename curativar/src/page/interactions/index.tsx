@@ -1,13 +1,13 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootBottomTabParamList } from "../../types/navigation";
-import { Box, Button, HStack, Select, Text, useColorMode } from "native-base";
-import PostsList from "../../components/PostsList";
+import { Box, Button, Text, useColorMode } from "native-base";
 import { useCallback, useEffect, useState } from "react";
-import OptionMenu from "../../components/OptionMenu";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getInteractions } from "../../services/get-interactions";
-import { IPost } from "../../types/post";
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
+import { RootBottomTabParamList } from "../../types/navigation";
+import PostsList from "../../components/PostsList";
+import OptionMenu from "../../components/OptionMenu";
+import getInteractions from "../../services/get-interactions";
+import { IPost } from "../../types/post";
 
 type Props = NativeStackScreenProps<RootBottomTabParamList, 'Interactions'>;
 
@@ -34,12 +34,11 @@ export default function Interactions({navigation}: Props){
         setPage(1);
         setTotalPosts(response.meta.pagination.total);
         setPosts(response.data);
-        console.log(response.data);
         
         setRefreshing(false);
       }
     );
-  }, []);
+  }, [userId]);
 
   const loadMorePosts = async () => {
     setRefreshing(true);
@@ -85,10 +84,10 @@ export default function Interactions({navigation}: Props){
         HeaderFlatist={
           <Box>
             <OptionMenu />
-            <Box alignItems={"center"}>
+            <Box alignItems="center">
               <Text 
                 mt={30} 
-                fontFamily={"default"} 
+                fontFamily="default" 
                 fontWeight={700} 
                 fontSize={32} 
                 color={ dark ? "#EDEFF1" :"#121827" }
@@ -99,10 +98,10 @@ export default function Interactions({navigation}: Props){
       />
       {showScrollTopButton?
         <Button 
-          position={"absolute"} 
-          bottom={"40px"} 
-          right={"10px"} 
-          rounded={"full"}
+          position="absolute" 
+          bottom="40px" 
+          right="10px" 
+          rounded="full"
           onPress={() => {
               seIsToScrollUp(true)
             }

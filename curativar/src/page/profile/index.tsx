@@ -1,16 +1,17 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types/navigation";
 import { Avatar, Box, Button, Image, Pressable, ScrollView, Text, useColorMode } from "native-base";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
-import OptionMenu from "../../components/OptionMenu";
 import { useCallback, useEffect, useRef, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
+import { RefreshControl } from "react-native";
+import { RootStackParamList } from "../../types/navigation";
+import OptionMenu from "../../components/OptionMenu";
 import { getUserPosts } from "../../services/get-user-posts";
 import { IPost } from "../../types/post";
 import { baseUrl, getAxiosInstance } from "../../config/axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IUser } from "../../types/user";
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
-import { RefreshControl } from "react-native";
+import getValidImage from "../../helpers/get-valid-image";
 
 type Props = NativeStackScreenProps<RootStackParamList>;
 
@@ -65,9 +66,8 @@ export default function Profile({navigation}: Props){
         const userResponse = await axiosInstance.get(`/users/${user.id}?populate=profile_pic`);
 
         if(userResponse.data.profile_pic){
-          console.log(userResponse.data.profile_pic);
-          
-          setUserPic(userResponse.data.profile_pic.formats.small.url);
+          const imageUrl = getValidImage(userResponse.data.profile_pic.formats, 'small');
+          setUserPic(imageUrl);
         }
         setPosts(postsResponse);
       } catch (error) {
@@ -107,7 +107,7 @@ export default function Profile({navigation}: Props){
   }
 
   return (
-    <Box position={"relative"} flex={1}>
+    <Box position="relative" flex={1}>
       <ScrollView 
         ref={scrollRef}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -116,8 +116,8 @@ export default function Profile({navigation}: Props){
       >
         <OptionMenu />
         <Box 
-          alignItems={"center"} 
-          position={"relative"}
+          alignItems="center" 
+          position="relative"
           p={10}
         >
           <Box position="relative">
@@ -131,18 +131,20 @@ export default function Profile({navigation}: Props){
             }
           </Box>
 
-          <Text fontFamily={"default"} fontWeight={700} textAlign={"center"} fontSize={24} color={dark ? "gray.50" : "secondary.default"}>{user?.name}</Text>
+          <Text fontFamily="default" fontWeight={700} textAlign="center" fontSize={24} color={dark ? "gray.50" : "secondary.default"}>{user?.name}</Text>
 
-          <Box alignItems={"center"} mt={20}>
-            <Text fontFamily={"default"} fontWeight={700} fontSize={24} mb={5} color={dark ? "gray.50" : "secondary.default" }>Publicações</Text>
+          <Box alignItems="center" mt={20}>
+            <Text fontFamily="default" fontWeight={700} fontSize={24} mb={5} color={dark ? "gray.50" : "secondary.default" }>Publicações</Text>
 
-            <Box flexDir={"row"} flexWrap={"wrap"} justifyContent={"center"} style={{gap: 15}}>
+            <Box flexDir="row" flexWrap="wrap" justifyContent="center" style={{gap: 15}}>
               {posts.map((post)=>(  
                   <Pressable key={post.id} onPress={()=>{handlePressPost(post.id)}}>
                     <Image
                       style={{ borderRadius: 20, height: 150, width: 150 }}
                       source={{
-                        uri: `${baseUrl.replace("/api", "")}${post.attributes.image.data.attributes.formats.thumbnail.url}`
+                        uri: `${baseUrl.replace("/api", "")}${
+                          getValidImage(post.attributes.image.data.attributes.formats, 'thumbnail')
+                        }`
                       }} 
                       alt="Publicação" 
                       size="xl" 
@@ -156,10 +158,10 @@ export default function Profile({navigation}: Props){
       </ScrollView>
       {showScrollTopButton?
         <Button 
-          position={"absolute"} 
-          bottom={"40px"} 
-          right={"10px"} 
-          rounded={"full"}
+          position="absolute" 
+          bottom="40px" 
+          right="10px" 
+          rounded="full"
           onPress={handleScrollUp}
         >
           <SimpleLineIcons

@@ -1,16 +1,40 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types/navigation";
-import { Actionsheet, Avatar, Box, Button, Center, FlatList, Flex, HStack, Image, ScrollView, Text, VStack, useColorMode, useDisclose } from "native-base";
+import {
+  Avatar,
+  Box,
+  Button,
+  Center,
+  Flex,
+  HStack,
+  Image,
+  ScrollView,
+  Text,
+  VStack,
+  useColorMode,
+} from "native-base";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
 import Feather from 'react-native-vector-icons/Feather'
 import Foundation from 'react-native-vector-icons/Foundation'
-import { AvatarStyles, BackBoxStyle, HStackStyle, MainVStackStyle, RegularTextStyles, SmallTextStyle, TitleTextStyles, UserNameTextStyles, getImageStyles } from "./styles";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
+import moment from "moment";
+import {
+  AvatarStyles,
+  BackBoxStyle,
+  HStackStyle,
+  MainVStackStyle,
+  RegularTextStyles,
+  SmallTextStyle,
+  TitleTextStyles,
+  UserNameTextStyles,
+  getImageStyles,
+} from "./styles";
 import { getPost } from "../../services/get-post";
 import { IPost } from "../../types/post";
 import { baseUrl } from "../../config/axios";
-import moment from "moment";
+import { RootStackParamList } from "../../types/navigation";
+import getValidImage from "../../helpers/get-valid-image";
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Post'>;
 
@@ -42,7 +66,7 @@ export default function Post({route, navigation}: Props){
   };
 
   const getDateTime = () => {
-    if(!post) return
+    if(!post) return '';
     const dateTime = new Date(post.attributes.patient.data.attributes.publishedAt);
 
     return moment(dateTime).format("DD/MM/YYYY, HH:mm:ss");
@@ -51,7 +75,7 @@ export default function Post({route, navigation}: Props){
   return  (
     <ScrollView backgroundColor={ dark ? "#121827" : "#EDEFF1" } >
       {post ?
-        <Box width={"100%"}>
+        <Box width="100%">
           <Center>
             <Box {...BackBoxStyle}>
               <Button variant="unstyled" onPress={() => { navigation.goBack() }}>
@@ -68,8 +92,10 @@ export default function Post({route, navigation}: Props){
                   <Avatar 
                     {...AvatarStyles} 
                     bg="green.500" 
-                    source={{ uri: `${baseUrl.replace("/api", "")}${post.attributes.users_permissions_user.data.attributes.profile_pic.data.attributes.formats.thumbnail.url}`}}
-                  ></Avatar>
+                    source={{ uri: `${baseUrl.replace("/api", "")}${
+                      getValidImage(post.attributes.users_permissions_user.data.attributes.profile_pic.data.attributes.formats, 'thumbnail')
+                    }`}}
+                   />
                 ) : (
                   <Avatar {...AvatarStyles} bg="gray.50">
                     <FontAwesomeIcons
@@ -94,17 +120,15 @@ export default function Post({route, navigation}: Props){
                   style={getImageStyles(vstackWidth)}
                   source={{
                     uri: `${baseUrl.replace("/api", "")}${
-                      post.attributes.image.data.attributes.formats.medium 
-                      ? post.attributes.image.data.attributes.formats.medium.url 
-                      : post.attributes.image.data.attributes.formats.small.url 
+                      getValidImage(post.attributes.image.data.attributes.formats)
                     }`
                   }} alt="Alternate Text" 
                   size="xl" 
                 />
                 <Box bottom={4} right={4} position="absolute">
                   <Button 
-                    rounded={"full"} 
-                    bgColor={"primary.500"} 
+                    rounded="full" 
+                    bgColor="primary.500" 
                     onPress={handlePressMessage}
                   >
                     <Foundation

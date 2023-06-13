@@ -9,8 +9,8 @@ import {
 } from "native-base";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useContext, useState } from "react";
-import { AuthContext } from "../context/authContext";
 import { useNavigation } from "@react-navigation/native";
+import { AuthContext } from "../context/authContext";
 
 export default function OptionMenu(){
   const navigation = useNavigation<any>();
@@ -36,17 +36,20 @@ export default function OptionMenu(){
           top={2}
           right={5}
           borderRadius={15}
-          closeOnSelect={false}
+          closeOnSelect
           trigger={
-            triggerProps => {
-              return <Pressable accessibilityLabel="More options menu" {...triggerProps}>
-                <MaterialCommunityIcons 
-                  name="dots-vertical" 
-                  size={40} 
-                  color={colorMode === "dark" ? '#EDEFF1' : '#121827' }
-                />
-              </Pressable>;
-            }
+            triggerProps => (
+                <Pressable
+                  accessibilityLabel="More options menu"
+                  {...triggerProps}
+                >
+                    <MaterialCommunityIcons 
+                      name="dots-vertical" 
+                      size={40} 
+                      color={colorMode === "dark" ? '#EDEFF1' : '#121827' }
+                    />
+                </Pressable>
+              )
           }
         >
           <Menu.Item onPress={handleToggle} >

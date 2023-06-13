@@ -1,6 +1,6 @@
 import { getAxiosInstance } from "../config/axios";
 
-export const getPosts = async (page: number) => {
+const getPosts = async (page: number) => {
   try {
     const axios = await getAxiosInstance();
     const postsResponse = await axios.get(
@@ -29,3 +29,5 @@ export const getPosts = async (page: number) => {
     }
   }
 }
+
+export default getPosts;

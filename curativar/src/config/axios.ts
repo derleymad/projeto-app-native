@@ -10,7 +10,7 @@ export async function getAxiosInstance(){
     
     if(user !== null) {
       const parseUser = JSON.parse(user);
-      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${parseUser.token}`;
+      axiosInstance.defaults.headers.common.Authorization = `Bearer ${parseUser.token}`;
     }
     
     return axiosInstance

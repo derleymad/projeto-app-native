@@ -1,13 +1,12 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootBottomTabParamList } from "../../types/navigation";
 import { Box, Button, useColorMode } from "native-base";
+import { useCallback, useEffect, useState } from "react";
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
+import { RootBottomTabParamList } from "../../types/navigation";
 import PostsList from "../../components/PostsList";
 import OptionMenu from "../../components/OptionMenu";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { baseUrl, getAxiosInstance } from "../../config/axios";
-import { getPosts } from "../../services/get-posts";
+import getPosts from "../../services/get-posts";
 import { IPost } from "../../types/post";
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 
 type Props = NativeStackScreenProps<RootBottomTabParamList, 'Feed'>;
 
@@ -75,10 +74,10 @@ export default function Feed({navigation}: Props){
       />
       {showScrollTopButton?
         <Button 
-          position={"absolute"} 
-          bottom={"40px"} 
-          right={"10px"} 
-          rounded={"full"}
+          position="absolute" 
+          bottom="40px" 
+          right="10px" 
+          rounded="full"
           onPress={() => {
               seIsToScrollUp(true)
             }

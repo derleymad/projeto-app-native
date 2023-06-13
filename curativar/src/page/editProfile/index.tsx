@@ -1,16 +1,27 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types/navigation";
-import { Avatar, Box, Button, Center, Input, ScrollView, Text, useColorMode } from "native-base";
+import {
+  Avatar,
+  Box,
+  Button,
+  Center,
+  Input,
+  ScrollView,
+  Text,
+  useColorMode,
+} from "native-base";
 import Feather from 'react-native-vector-icons/Feather'
-import { BackBoxStyle, EditButton, NameInputStyle } from "./styles";
-import SelectImageInput from "../../components/SelectImageInput";
 import { ImagePickerResponse } from "react-native-image-picker";
 import { useEffect, useState } from "react";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
-import { postImage } from "../../services/post-image";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RootStackParamList } from "../../types/navigation";
+import { BackBoxStyle, EditButton, NameInputStyle } from "./styles";
+import SelectImageInput from "../../components/SelectImageInput";
+import postImage from "../../services/post-image";
 import { baseUrl, getAxiosInstance } from "../../config/axios";
 import { IUser } from "../../types/user";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import getValidImage from "../../helpers/get-valid-image";
+import removeImage from "../../services/remove-image";
 
 type Props = NativeStackScreenProps<RootStackParamList>;
 
@@ -34,9 +45,9 @@ export default function EditProfile({navigation}: Props) {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const user = await AsyncStorage.getItem("user");
-        if(!user) return;
-        const { id } = JSON.parse(user);
+        const userStorage = await AsyncStorage.getItem("user");
+        if(!userStorage) return;
+        const { id } = JSON.parse(userStorage);
         const axiosInstance = await getAxiosInstance();
         const userData = await axiosInstance.get(`/users/${id}?populate=profile_pic`);
         setName(userData.data.name)
@@ -56,6 +67,8 @@ export default function EditProfile({navigation}: Props) {
 
     let imageResponse = null
     if(imageAssets.assets) {
+      const imageId =  user?.profile_pic.id ?? -1;
+      await removeImage(imageId);
       imageResponse = await postImage(imageAssets);
 
       if(!imageResponse) return
@@ -69,10 +82,10 @@ export default function EditProfile({navigation}: Props) {
         putData = {profile_pic: imageResponse[0].id};
       }
       else if(imageResponse && !nameIsEqual){
-        putData = {name: name, profile_pic: imageResponse[0].id};
+        putData = {name, profile_pic: imageResponse[0].id};
       }
       else{
-        putData = {name: name};
+        putData = {name};
       }
       
       const axiosInstance = await getAxiosInstance(); 
@@ -97,7 +110,7 @@ export default function EditProfile({navigation}: Props) {
 
       <Center>
         <Text  
-          fontFamily={"default"} 
+          fontFamily="default" 
           fontWeight={700} 
           fontSize={32} 
           color={ dark ? "#EDEFF1" :"#121827" }
@@ -117,9 +130,7 @@ export default function EditProfile({navigation}: Props) {
                         uri: imageAssets.assets ? 
                         imageAssets.assets[0].uri 
                         :`${baseUrl.replace("/api", "")}${
-                          user.profile_pic?.formats.medium 
-                          ? user.profile_pic?.formats.medium.url
-                          : user.profile_pic?.formats.small.url
+                          getValidImage(user.profile_pic?.formats)
                         }` 
                       }} 
                     /> : 

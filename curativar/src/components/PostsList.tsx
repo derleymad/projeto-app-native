@@ -1,9 +1,10 @@
 import { Box, Image, Pressable, FlatList, Avatar, Text, HStack, Flex, Button } from "native-base";
 import { RefreshControl, useWindowDimensions } from "react-native";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
+import { useEffect, useRef } from "react";
 import { IPost } from "../types/post";
 import { baseUrl } from "../config/axios";
-import { useEffect, useRef } from "react";
+import getValidImage from "../helpers/get-valid-image";
 
 interface PostsListProps{
   posts: IPost[];
@@ -50,13 +51,13 @@ export default function PostsList({
       ref={scrollRef}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       onScroll={handleScroll}
-      w={"100%"}
+      w="100%"
       data={posts} 
-      ListHeaderComponent={HeaderFlatist ? HeaderFlatist : null}
+      ListHeaderComponent={HeaderFlatist || null}
       ListFooterComponent={
         totalPosts > posts.length ? (
           <Button 
-            variant={"ghost"} 
+            variant="ghost" 
             _text={{fontSize: 18}} 
             onPress={loadMorePosts}
           >Carregar mais</Button>
@@ -66,15 +67,15 @@ export default function PostsList({
         )
       }
       renderItem={({ item: { id, attributes } }) => (
-        <Box width={"100%"} alignItems={"center"}>
+        <Box key={id} width="100%" alignItems="center">
           <Pressable 
-            width={"80%"}  
+            width="80%"  
             my={3} 
-            position={"relative"} 
+            position="relative" 
             onPress={() => { handlePressPost(id) }}
           >
             <Image
-              style={{ borderRadius: 20, height: 280, width: width }}
+              style={{ borderRadius: 20, height: 280, width }}
               source={{
                 uri: `${baseUrl.replace("/api", "")}${attributes.image.data.attributes.url}`
               }} 
@@ -83,14 +84,14 @@ export default function PostsList({
             />
             
             <HStack 
-              w={"190px"} 
-              h={"45px"} 
-              position={"absolute"} 
-              bgColor={"rgba(18, 24, 39, 0.8)"} 
-              left={"14px"} 
-              top={"14px"}
+              w="190px" 
+              h="45px" 
+              position="absolute" 
+              bgColor="rgba(18, 24, 39, 0.8)" 
+              left="14px" 
+              top="14px"
               borderRadius={50}
-              alignItems={"center"}
+              alignItems="center"
               p={2}
             >
               {attributes.users_permissions_user.data.attributes.profile_pic.data ? (
@@ -99,7 +100,7 @@ export default function PostsList({
                     bg="green.500" 
                     alignSelf="center" 
                     size="sm" 
-                    source={{ uri: `${baseUrl.replace("/api", "")}${attributes.users_permissions_user.data.attributes.profile_pic.data.attributes.formats.small.url}` }}
+                    source={{ uri: `${baseUrl.replace("/api", "")}${getValidImage(attributes.users_permissions_user.data.attributes.profile_pic.data.attributes.formats)}` }}
                   >
                     W
                   </Avatar>

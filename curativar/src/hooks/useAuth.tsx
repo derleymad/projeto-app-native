@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
-import { THandleCreateAccountDTO, THandleLoginDTO } from "../types/useAuth";
-import { baseUrl, getAxiosInstance } from "../config/axios";
 import axios from "axios";
+import { THandleCreateAccountDTO, THandleLoginDTO } from "../types/useAuth";
+import { baseUrl } from "../config/axios";
 import { IAuthUser } from "../types/user";
 
 export default function useAuth() {
@@ -28,7 +28,7 @@ export default function useAuth() {
         setShowError(false);
         const { data } = await axios.post(`${baseUrl}/auth/local`, {
           identifier: email,
-          password: password
+          password
         });
 
         const { jwt, user } = data;
@@ -45,7 +45,6 @@ export default function useAuth() {
       }
     } catch (error) {
       setShowError(true);
-      console.log(error);
     }
   }
 
@@ -84,19 +83,18 @@ export default function useAuth() {
       };
 
       const { data } = await axios.post(`${baseUrl}/auth/local/register`, body);
-      const { jwt, user } = data;
+      const { jwt, user: userStorage } = data;
 
       const currentUser = {
         token: jwt,
-        name: user.name,
-        id: user.id 
+        name: userStorage.name,
+        id: userStorage.id 
       }
 
       await AsyncStorage.setItem('user', JSON.stringify(currentUser));
 
       setUser(currentUser);
     } catch (error) {
-      console.error(JSON.stringify(error, null, 2));
       onError();
     }
   }

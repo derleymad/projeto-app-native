@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootBottomTabParamList } from "../../types/navigation";
 import {
   Box,
   Button,
@@ -13,16 +12,17 @@ import {
 } from "native-base";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Styles from "./styles";
 import { useState, useCallback, useContext } from "react";
 import { ImagePickerResponse } from "react-native-image-picker";
-import SelectImageInput from "../../components/SelectImageInput";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { TextInputMask } from "react-native-masked-text";
-import { getAxiosInstance } from "../../config/axios";
 import { useWindowDimensions } from "react-native";
 import Snackbar from "react-native-snackbar";
-import { postImage } from "../../services/post-image";
+import { getAxiosInstance } from "../../config/axios";
+import SelectImageInput from "../../components/SelectImageInput";
+import Styles from "./styles";
+import { RootBottomTabParamList } from "../../types/navigation";
+import postImage from "../../services/post-image";
 import { AuthContext } from "../../context/authContext";
 import { postPost } from "../../services/post-post";
 import OptionMenu from "../../components/OptionMenu";
@@ -96,8 +96,8 @@ export default function CreatePost({navigation}: Props){
     }
 
     const emptyField = Object.entries(form)
-                        .filter(([,value]) => value === "")
-                        .map(([key]) => TranslateEmptyFields[key]);
+      .filter(([,value]) => value === "")
+      .map(([key]) => TranslateEmptyFields[key]);
     
     if(emptyField.length > 0 ) {
       const fields = emptyField.join(", ");
@@ -164,7 +164,6 @@ export default function CreatePost({navigation}: Props){
         text: "Não foi possível criar o post!",
         duration: Snackbar.LENGTH_SHORT,
       });
-      console.log(JSON.stringify(error, null, 2));
       postError();
       handleResetData();
     }
@@ -203,7 +202,7 @@ export default function CreatePost({navigation}: Props){
   return (
     <ScrollView flex={1}>
       <Box {...Styles.box} bg={getDefaultColor()}>
-          <Box width={"100%"} mb={3}>
+          <Box width="100%" mb={3}>
             <OptionMenu/>
           </Box>
           <Text {...Styles.h1} color={getDefaultColor(true)}>Nova Publicação</Text>
@@ -211,7 +210,7 @@ export default function CreatePost({navigation}: Props){
               <Box {...Styles.imageInput}>
                 {imageAssets.assets ? (
                   <Image
-                    style={{ borderRadius: 17, height: 277, width: width }}
+                    style={{ borderRadius: 17, height: 277, width }}
                     source={{
                       uri: `${imageAssets.assets[0].uri}`
                     }} 
@@ -250,7 +249,7 @@ export default function CreatePost({navigation}: Props){
               render={
                 ({ field }) => (
                   <TextInputMask
-                    type={'cpf'}
+                    type="cpf"
                     value={field.value}
                     customTextInput={Input}
                     onChangeText={(text) => {
@@ -294,7 +293,7 @@ export default function CreatePost({navigation}: Props){
               render={
                 ({ field }) => (
                   <TextInputMask
-                    type={'cel-phone'}
+                    type="cel-phone"
                     value={field.value}
                     customTextInput={Input}
                     onChangeText={(text) => field.onChange(text.replace(" ",""))}
