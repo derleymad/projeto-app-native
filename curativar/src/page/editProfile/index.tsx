@@ -1,18 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/navigation";
-import { Avatar, Box, Button, Center, Input, ScrollView, Text, VStack, useColorMode } from "native-base";
-import OptionMenu from "../../components/OptionMenu";
+import { Avatar, Box, Button, Center, Input, ScrollView, Text, useColorMode } from "native-base";
 import Feather from 'react-native-vector-icons/Feather'
 import { BackBoxStyle, EditButton, NameInputStyle } from "./styles";
 import SelectImageInput from "../../components/SelectImageInput";
 import { ImagePickerResponse } from "react-native-image-picker";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
-import { AuthContext } from "../../context/authContext";
-import { getImage } from "../../services/get-image";
 import { postImage } from "../../services/post-image";
 import { baseUrl, getAxiosInstance } from "../../config/axios";
-import { IAuthUser, IUser } from "../../types/user";
+import { IUser } from "../../types/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Props = NativeStackScreenProps<RootStackParamList>;
@@ -42,8 +39,8 @@ export default function EditProfile({navigation}: Props) {
         const { id } = JSON.parse(user);
         const axiosInstance = await getAxiosInstance();
         const userData = await axiosInstance.get(`/users/${id}?populate=profile_pic`);
-        setUser(userData.data);
         setName(userData.data.name)
+        setUser(userData.data);
       } catch (error) {
         console.log(error);
       }
@@ -119,7 +116,11 @@ export default function EditProfile({navigation}: Props) {
                       source={{
                         uri: imageAssets.assets ? 
                         imageAssets.assets[0].uri 
-                        :`${baseUrl.replace("/api", "")}${user.profile_pic?.formats.medium.url}` 
+                        :`${baseUrl.replace("/api", "")}${
+                          user.profile_pic?.formats.medium 
+                          ? user.profile_pic?.formats.medium.url
+                          : user.profile_pic?.formats.small.url
+                        }` 
                       }} 
                     /> : 
                     <Avatar size={150} bgColor="gray.50" my={34}>

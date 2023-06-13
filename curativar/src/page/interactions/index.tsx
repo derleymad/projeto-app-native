@@ -34,6 +34,8 @@ export default function Interactions({navigation}: Props){
         setPage(1);
         setTotalPosts(response.meta.pagination.total);
         setPosts(response.data);
+        console.log(response.data);
+        
         setRefreshing(false);
       }
     );

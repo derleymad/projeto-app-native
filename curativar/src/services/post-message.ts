@@ -17,8 +17,6 @@ export const postMessage = async ({ message, userId, postId }: IPostMessageProps
       }
     })
 
-    console.log(postResponse.data);
-
     return postResponse.data.data;
   } catch(error) {
     console.error(error);

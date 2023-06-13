@@ -5,10 +5,10 @@ export const getPost = async (id: number) => {
     const axios = await getAxiosInstance();
     const postsResponse = await axios.get(`/posts/${id}`,{
         params: {
-          "populate[0]": "message", 
-          "populate[1]": "patient",
-          "populate[2]": "users_permissions_user.profile_pic",
-          "populate[3]": "image",
+          "populate[0]": "image",
+          "populate[1]": "message", 
+          "populate[2]": "patient",
+          "populate[3]": "users_permissions_user.profile_pic",
         }
       }
     );

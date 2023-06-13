@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { postMessage } from "../../services/post-message";
 import { getMessages } from "../../services/get-messages";
-import { IMessageResponse } from "../../types/messageResponse";
 import { IMessage } from "../../types/message";
 import { baseUrl } from "../../config/axios";
 
@@ -52,7 +51,7 @@ export default function Messages({route, navigation}: Props){
     }
   }
 
-  useEffect(() => {
+  const getNewMessages = () => {
     if(!postId) return
 
     AsyncStorage.getItem("user")
@@ -69,10 +68,22 @@ export default function Messages({route, navigation}: Props){
         const orderedMessages = data.sort((a, b) => {
           return new Date(a.attributes.publishedAt) > new Date(b.attributes.publishedAt) ? -1 : 1
         })
+        
         setMessages(orderedMessages);
       }
     );
+  }
+
+  useEffect(() => {
+    getNewMessages();
   },[]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      getNewMessages();
+    }, 20000);
+    return () => clearInterval(timer);
+  }, []);
 
   return  (
     <Box flex={1}>

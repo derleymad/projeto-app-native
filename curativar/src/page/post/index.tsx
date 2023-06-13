@@ -69,9 +69,7 @@ export default function Post({route, navigation}: Props){
                     {...AvatarStyles} 
                     bg="green.500" 
                     source={{ uri: `${baseUrl.replace("/api", "")}${post.attributes.users_permissions_user.data.attributes.profile_pic.data.attributes.formats.thumbnail.url}`}}
-                  >
-                    W
-                  </Avatar>
+                  ></Avatar>
                 ) : (
                   <Avatar {...AvatarStyles} bg="gray.50">
                     <FontAwesomeIcons
@@ -95,7 +93,11 @@ export default function Post({route, navigation}: Props){
                 <Image 
                   style={getImageStyles(vstackWidth)}
                   source={{
-                    uri: `${baseUrl.replace("/api", "")}${post.attributes.image.data.attributes.formats.medium.url}`
+                    uri: `${baseUrl.replace("/api", "")}${
+                      post.attributes.image.data.attributes.formats.medium 
+                      ? post.attributes.image.data.attributes.formats.medium.url 
+                      : post.attributes.image.data.attributes.formats.small.url 
+                    }`
                   }} alt="Alternate Text" 
                   size="xl" 
                 />
