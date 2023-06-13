@@ -24,7 +24,6 @@ export default function Post({route, navigation}: Props){
   const [post, setPost] = useState<IPost| null>(null);
 
   useEffect(() => {
-    if(!postId) return
     getPost(postId).then(response => setPost(response));
   },[]);
   
@@ -32,6 +31,10 @@ export default function Post({route, navigation}: Props){
   const dark = colorMode === "dark";
 
   const [vstackWidth, setVStackWidth] = useState(Dimensions.get('window').width * 0.90);
+
+  const handlePressMessage = () => {
+    navigation.navigate("Messages", { postId: post?.id })
+  }
 
   const handleLayout = (event: any) => {
     const { width } = event.nativeEvent.layout;
@@ -100,7 +103,7 @@ export default function Post({route, navigation}: Props){
                   <Button 
                     rounded={"full"} 
                     bgColor={"primary.500"} 
-                    onPress={() => { navigation.navigate("Messages") }}
+                    onPress={handlePressMessage}
                   >
                     <Foundation
                       name="comments"

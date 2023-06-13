@@ -1,14 +1,16 @@
 import { getAxiosInstance } from "../config/axios";
+import { IMessageResponse } from "../types/messageResponse";
 
-export const getPosts = async (page: number) => {
+export const getMessages = async (postId: number): Promise<IMessageResponse> => {
   try {
     const axios = await getAxiosInstance();
     const postsResponse = await axios.get(
-      `/posts?pagination[pageSize]=10&pagination[page]=${page}&sort[0]=createdAt%3Adesc`,
+      `/messages`,
       {
         params: {
+          "pagination[pageSize]": 3000,
+          "filters[post][id][$eq]": postId,
           "populate[0]": "users_permissions_user.profile_pic",
-          "populate[1]": "image",
         }
       }
     );
@@ -17,8 +19,8 @@ export const getPosts = async (page: number) => {
   } catch (error) {
     console.log(error);
     return {
-      data: [], 
-      meta: {
+      data: [],
+      "meta": {
         "pagination": {
           "page": 0,
           "pageSize": 0,
@@ -26,6 +28,6 @@ export const getPosts = async (page: number) => {
           "total": 0
         }
       }
-    }
+    };
   }
 }

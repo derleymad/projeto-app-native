@@ -12,6 +12,7 @@ import Post from './src/page/post';
 import Messages from './src/page/messages';
 import { AuthContext } from './src/context/authContext';
 import useAuth from './src/hooks/useAuth';
+import EditProfile from './src/page/editProfile';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -46,6 +47,7 @@ export default function App() {
                 <Stack.Screen name="Authenticated" component={Authenticated} options={{ }}/>
                 <Stack.Screen name="Post" component={Post} options={{ }}/>
                 <Stack.Screen name="Messages" component={Messages} options={{ }}/>
+                <Stack.Screen name="EditProfile" component={EditProfile} options={{ }}/>
               </>
             }
           </Stack.Navigator>

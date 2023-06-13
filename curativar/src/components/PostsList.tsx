@@ -1,25 +1,70 @@
-import { Box, Image, Pressable, FlatList, Avatar, Text, HStack, Flex } from "native-base";
-import { useWindowDimensions } from "react-native";
+import { Box, Image, Pressable, FlatList, Avatar, Text, HStack, Flex, Button } from "native-base";
+import { RefreshControl, useWindowDimensions } from "react-native";
 import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome5'
 import { IPost } from "../types/post";
 import { baseUrl } from "../config/axios";
+import { useEffect, useRef } from "react";
 
 interface PostsListProps{
   posts: IPost[];
   HeaderFlatist?: any;
   navigation: any
+  refreshing: boolean;
+  onRefresh: () => void;
+  loadMorePosts: () => void;
+  totalPosts: number;
+  handleScroll: (e: any) => void;
+  isToScrollUp: boolean;
+  seIsToScrollUp: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function PostsList({ posts, HeaderFlatist, navigation }: PostsListProps){
+export default function PostsList({ 
+  posts, 
+  HeaderFlatist, 
+  navigation, 
+  refreshing, 
+  onRefresh, 
+  loadMorePosts,
+  totalPosts,
+  handleScroll,
+  isToScrollUp,
+  seIsToScrollUp,
+}: PostsListProps){
   const { width } = useWindowDimensions();
-
+  const scrollRef = useRef<any>();
   const handlePressPost = (id: number) => { navigation.navigate("Post", {postId: id}) };
+  const handleScrollUp = () => {
+    scrollRef.current?.scrollToOffset({
+      offset: 0,
+      animated: true,
+    });
+    seIsToScrollUp(false);
+  }
+
+  useEffect(() => {
+    if(isToScrollUp) handleScrollUp();
+  },[isToScrollUp]);
 
   return (
     <FlatList 
+      ref={scrollRef}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      onScroll={handleScroll}
       w={"100%"}
       data={posts} 
       ListHeaderComponent={HeaderFlatist ? HeaderFlatist : null}
+      ListFooterComponent={
+        totalPosts > posts.length ? (
+          <Button 
+            variant={"ghost"} 
+            _text={{fontSize: 18}} 
+            onPress={loadMorePosts}
+          >Carregar mais</Button>
+        )
+        : (
+          <></>
+        )
+      }
       renderItem={({ item: { id, attributes } }) => (
         <Box width={"100%"} alignItems={"center"}>
           <Pressable 

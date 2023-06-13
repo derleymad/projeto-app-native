@@ -22,7 +22,7 @@ const Styles: TStylesProps = {
   box: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: '74px',
+    paddingTop: '10px',
     paddingLeft: '22px',
     paddingRight: '22px',
     paddingBottom: '20px',

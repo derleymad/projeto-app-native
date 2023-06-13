@@ -1,14 +1,18 @@
 import { getAxiosInstance } from "../config/axios";
 
-export const getPosts = async (page: number) => {
+export const getInteractions = async (page: number, userId: number) => {
   try {
     const axios = await getAxiosInstance();
     const postsResponse = await axios.get(
-      `/posts?pagination[pageSize]=10&pagination[page]=${page}&sort[0]=createdAt%3Adesc`,
+      `/posts`,
       {
         params: {
+          "pagination[pageSize]": 10,
+          "pagination[page]": page,
+          "filters[messages][users_permissions_user][id][$eq]": userId,
           "populate[0]": "users_permissions_user.profile_pic",
           "populate[1]": "image",
+          "sort[0]":" createdAt%3Adesc",
         }
       }
     );

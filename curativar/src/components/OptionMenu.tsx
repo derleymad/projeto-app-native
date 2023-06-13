@@ -10,8 +10,10 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/authContext";
+import { useNavigation } from "@react-navigation/native";
 
 export default function OptionMenu(){
+  const navigation = useNavigation<any>();
   const { colorMode, setColorMode } = useColorMode();
   const [switchValue, setSwitchValue] = useState(colorMode === "dark");
   const { handleLogout } = useContext(AuthContext);
@@ -24,7 +26,6 @@ export default function OptionMenu(){
     else{
       setColorMode("light");
     }
-    
   }
 
   return (
@@ -55,6 +56,9 @@ export default function OptionMenu(){
               onToggle={handleToggle}
               isChecked={switchValue}
             />
+          </Menu.Item>
+          <Menu.Item onPress={() => navigation.navigate("EditProfile")}>
+            <Text>Editar Perfil</Text>
           </Menu.Item>
           <Menu.Item onPress={() => handleLogout ? handleLogout() : null}>
             <Text>Logout</Text>

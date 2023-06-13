@@ -25,6 +25,7 @@ import Snackbar from "react-native-snackbar";
 import { postImage } from "../../services/post-image";
 import { AuthContext } from "../../context/authContext";
 import { postPost } from "../../services/post-post";
+import OptionMenu from "../../components/OptionMenu";
 
 type Props = NativeStackScreenProps<RootBottomTabParamList, 'CreatePost'>;
 
@@ -47,7 +48,7 @@ interface IFormInput {
   sex: string,
 };
 
-export default function CreatePost(){
+export default function CreatePost({navigation}: Props){
   const { width } = useWindowDimensions();
   const { colorMode } = useColorMode();
   const getDefaultColor = useCallback((isText = false) => {
@@ -58,7 +59,6 @@ export default function CreatePost(){
   }, [colorMode])
   const [imageAssets, setImageAssets] =  useState<ImagePickerResponse>({});
   const [disableFields, setDisableFields] = useState(true);
-  const [patientExists, setPatientExists] = useState(false);
   const { user } = useContext(AuthContext);
 
   const { control, handleSubmit, setValue, reset } = useForm({
@@ -72,6 +72,19 @@ export default function CreatePost(){
       sex: '',
     },
   });
+
+  const handleResetData = () => {
+    setImageAssets({});
+    reset({
+      patient_id: null,
+      description: '',
+      cpf: '',
+      name: '',
+      phone: '',
+      age: '',
+      sex: '',
+    });
+  }
 
   const onSubmit: SubmitHandler<IFormInput> = async form => {
     if(!imageAssets.assets){
@@ -115,9 +128,9 @@ export default function CreatePost(){
 
     try {
       const axiosInstance = await getAxiosInstance();
-      let postResponse: any = null; 
+      let patientId = form.patient_id;
 
-      if(!patientExists){
+      if(!patientId){
         const patientResponse = await axiosInstance.post("/patients", {
           data:{
             name: form.name,
@@ -127,25 +140,33 @@ export default function CreatePost(){
             sex: form.sex
           }
         }) 
-        postResponse = await postPost({
-          description: form.description, 
-          userId: Number(user?.id), 
-          imageId: images[0].id,
-          patient_id: patientResponse.data.data.id
-        })
-      }
-      else{
-        postResponse = await postPost({
-          description: form.description, 
-          userId: Number(user?.id), 
-          imageId: images[0].id,
-          patient_id: Number(form.patient_id),
-        })
-      }
+        patientId = patientResponse.data.data.id;
+      }   
+
+      await postPost({
+        description: form.description, 
+        userId: Number(user?.id), 
+        imageId: images[0].id,
+        patient_id: Number(patientId),
+      });
+
+      handleResetData();
+      Snackbar.show({
+        backgroundColor: '#39AD94',
+        textColor: "#fff",
+        text: "Post criado com sucesso!",
+        duration: Snackbar.LENGTH_SHORT,
+      });
     } catch (error) {
-      console.log(error);
+      Snackbar.show({
+        backgroundColor: "#e92a2a",
+        textColor: "#fff",
+        text: "Não foi possível criar o post!",
+        duration: Snackbar.LENGTH_SHORT,
+      });
+      console.log(JSON.stringify(error, null, 2));
       postError();
-      return
+      handleResetData();
     }
   }
 
@@ -157,7 +178,6 @@ export default function CreatePost(){
 
       if(!patient) {
         setDisableFields(false);
-        setPatientExists(false);
         setValue("name", "");
         setValue("phone", "");
         setValue("age", "");
@@ -174,10 +194,8 @@ export default function CreatePost(){
       setValue("sex", sex);
       setValue("patient_id",  patientResponse.data.data[0].id);
       
-      setPatientExists(true);
       setDisableFields(false);
     } catch (error) {
-      setPatientExists(false);
       console.log(error);   
     }
   }
@@ -185,6 +203,9 @@ export default function CreatePost(){
   return (
     <ScrollView flex={1}>
       <Box {...Styles.box} bg={getDefaultColor()}>
+          <Box width={"100%"} mb={3}>
+            <OptionMenu/>
+          </Box>
           <Text {...Styles.h1} color={getDefaultColor(true)}>Nova Publicação</Text>
           <SelectImageInput setImageAssets={setImageAssets}>
               <Box {...Styles.imageInput}>
@@ -237,7 +258,6 @@ export default function CreatePost(){
                         setDisableFields(true);
                         getPatient(text);
                       } else {
-                        setPatientExists(false);
                         setDisableFields(true)
                       }
                       field.onChange(text)
@@ -306,6 +326,7 @@ export default function CreatePost(){
                       value={field.value}
                       onChangeText={(text) => field.onChange(text)}
                       isDisabled = {disableFields}
+                      keyboardType="numeric"
                     />
                   )
                 }

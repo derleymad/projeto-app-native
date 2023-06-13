@@ -7,7 +7,7 @@ interface IPostPostPros {
   patient_id: number
 }
 
-export const postPost = async ({description, userId, imageId ,patient_id}: IPostPostPros) => {
+export const postPost = async ({description, userId, imageId, patient_id}: IPostPostPros) => {
   try {
     const axiosInstance = await getAxiosInstance();
     const postResponse = await axiosInstance.post("/posts", {

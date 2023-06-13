@@ -4,7 +4,8 @@ export type RootStackParamList = {
   Recover: undefined;
   Authenticated: undefined;
   Post: {postId: number};
-  Messages: undefined;
+  Messages: { postId?: number };
+  EditProfile: undefined;
 };
 
 export type RootBottomTabParamList = {

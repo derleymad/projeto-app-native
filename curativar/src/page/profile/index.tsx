@@ -9,6 +9,8 @@ import { AuthContext } from "../../context/authContext";
 import { getUserPosts } from "../../services/get-user-posts";
 import { IPost } from "../../types/post";
 import { baseUrl, getAxiosInstance } from "../../config/axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IUser } from "../../types/user";
 
 type Props = NativeStackScreenProps<RootStackParamList>;
 
@@ -25,9 +27,30 @@ function ProfileIcon(){
 export default function Profile({navigation}: Props){
   const { colorMode } = useColorMode();
   const dark = colorMode === "dark";
-  const { user } = useContext(AuthContext);
+  const [user, setUser] = useState<IUser | null>(null);
   const [posts, setPosts] = useState<IPost[]>([]); 
   const [userPic, setUserPic] = useState<string | null>(null); 
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await AsyncStorage.getItem("user");
+      if(!user) return;
+      const { id } = JSON.parse(user);
+      const axiosInstance = await getAxiosInstance();
+      const userData = await axiosInstance.get(`/users/${id}?populate=profile_pic`);
+      const postsResponse = await getUserPosts(id);
+      const userResponse = await axiosInstance.get(`/users/${id}?populate=profile_pic`);
+
+      if(userResponse.data.profile_pic){
+        setUserPic(userResponse.data.profile_pic.formats.small.url);
+      }
+      setPosts(postsResponse);
+
+      setUser(userData.data);
+    }
+
+    getUser();
+  },[]);
 
   useEffect(() => {
     if(!user) return
@@ -72,7 +95,7 @@ export default function Profile({navigation}: Props){
           }
         </Box>
 
-        <Text fontFamily={"default"} fontWeight={700} fontSize={24} color={dark ? "gray.50" : "secondary.default" }>{user?.name}</Text>
+        <Text fontFamily={"default"} fontWeight={700} textAlign={"center"} fontSize={24} color={dark ? "gray.50" : "secondary.default"}>{user?.name}</Text>
 
         <Box alignItems={"center"} mt={20}>
           <Text fontFamily={"default"} fontWeight={700} fontSize={24} mb={5} color={dark ? "gray.50" : "secondary.default" }>Publicações</Text>

@@ -1,6 +1,5 @@
 import { ImagePickerResponse } from "react-native-image-picker";
-import axios from "axios";
-import { baseUrl } from "../config/axios";
+import { baseUrl, getAxiosInstance } from "../config/axios";
 
 export const postImage = async (imageAssets: ImagePickerResponse) => {
   const { assets } = imageAssets;
@@ -11,7 +10,8 @@ export const postImage = async (imageAssets: ImagePickerResponse) => {
   formData.append('files', { uri: file.uri, name: file.fileName, type: file.type });
 
   try {
-    const { data } = await axios.post(`${baseUrl}/upload`, formData, {
+    const axios = await getAxiosInstance();
+    const { data } = await axios.post(`/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       }
@@ -19,7 +19,7 @@ export const postImage = async (imageAssets: ImagePickerResponse) => {
 
     return data;
   } catch(error) {
-    console.error(error);
+    console.error(JSON.stringify(error, null, 2));
     return null;
   }
 }
