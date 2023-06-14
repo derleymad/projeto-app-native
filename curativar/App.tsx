@@ -9,22 +9,49 @@ import Recover from './src/page/recover';
 import { RootStackParamList } from './src/types/navigation';
 import Authenticated from './Authenticated';
 import Post from './src/page/post';
-import Messages from './src/page/messages/intex';
+import Messages from './src/page/messages';
+import { AuthContext } from './src/context/authContext';
+import useAuth from './src/hooks/useAuth';
+import EditProfile from './src/page/editProfile';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const {
+    user,
+    handleLogin,
+    handleLogout,
+    setUser,
+    handleCreateAccount,
+  } = useAuth();
+
   return (
     <NativeBaseProvider theme={theme}>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={Login} options={{ }}/>
-          <Stack.Screen name="Register" component={Register} options={{ }}/>
-          <Stack.Screen name="Recover" component={Recover} options={{ }}/>
-          <Stack.Screen name="Authenticated" component={Authenticated} options={{ }}/>
-          <Stack.Screen name="Post" component={Post} options={{ }}/>
-          <Stack.Screen name="Messages" component={Messages} options={{ }}/>
-        </Stack.Navigator>
+        <AuthContext.Provider value={{
+          user,
+          setUser,
+          handleLogin,
+          handleLogout,
+          handleCreateAccount
+        }}>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {!user ? 
+              <>
+                <Stack.Screen name="Login" component={Login} options={{ }}/>
+                <Stack.Screen name="Register" component={Register} options={{ }}/>
+                <Stack.Screen name="Recover" component={Recover} options={{ }}/>
+              </>
+            :
+              <>
+                <Stack.Screen name="Authenticated" component={Authenticated} options={{ }}/>
+                <Stack.Screen name="Post" component={Post} options={{ }}/>
+                <Stack.Screen name="Messages" component={Messages} options={{ }}/>
+                <Stack.Screen name="EditProfile" component={EditProfile} options={{ }}/>
+              </>
+            }
+          </Stack.Navigator>
+        </AuthContext.Provider>
       </NavigationContainer>
     </NativeBaseProvider>
   );

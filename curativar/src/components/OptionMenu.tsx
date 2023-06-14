@@ -1,10 +1,22 @@
-import { Box, HStack, Menu, Pressable, Switch, Text, View, useColorMode, useTheme } from "native-base";
+import {
+  Box,
+  Menu,
+  Pressable,
+  Switch,
+  Text,
+  View,
+  useColorMode,
+} from "native-base";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { AuthContext } from "../context/authContext";
 
 export default function OptionMenu(){
+  const navigation = useNavigation<any>();
   const { colorMode, setColorMode } = useColorMode();
   const [switchValue, setSwitchValue] = useState(colorMode === "dark");
+  const { handleLogout } = useContext(AuthContext);
   
   const handleToggle = () => {
     setSwitchValue(!switchValue);
@@ -14,11 +26,6 @@ export default function OptionMenu(){
     else{
       setColorMode("light");
     }
-    
-  }
-
-  const handleLogout = () => {
-
   }
 
   return (
@@ -29,17 +36,20 @@ export default function OptionMenu(){
           top={2}
           right={5}
           borderRadius={15}
-          closeOnSelect={false}
+          closeOnSelect
           trigger={
-            triggerProps => {
-              return <Pressable accessibilityLabel="More options menu" {...triggerProps}>
-                <MaterialCommunityIcons 
-                  name="dots-vertical" 
-                  size={40} 
-                  color={colorMode === "dark" ? '#EDEFF1' : '#121827' }
-                />
-              </Pressable>;
-            }
+            triggerProps => (
+                <Pressable
+                  accessibilityLabel="More options menu"
+                  {...triggerProps}
+                >
+                    <MaterialCommunityIcons 
+                      name="dots-vertical" 
+                      size={40} 
+                      color={colorMode === "dark" ? '#EDEFF1' : '#121827' }
+                    />
+                </Pressable>
+              )
           }
         >
           <Menu.Item onPress={handleToggle} >
@@ -50,7 +60,10 @@ export default function OptionMenu(){
               isChecked={switchValue}
             />
           </Menu.Item>
-          <Menu.Item onPress={handleLogout}>
+          <Menu.Item onPress={() => navigation.navigate("EditProfile")}>
+            <Text>Editar Perfil</Text>
+          </Menu.Item>
+          <Menu.Item onPress={() => handleLogout ? handleLogout() : null}>
             <Text>Logout</Text>
           </Menu.Item>
         </Menu>

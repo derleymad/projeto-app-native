@@ -3,8 +3,9 @@ export type RootStackParamList = {
   Register: undefined;
   Recover: undefined;
   Authenticated: undefined;
-  Post: undefined;
-  Messages: undefined;
+  Post: {postId: number};
+  Messages: { postId?: number };
+  EditProfile: undefined;
 };
 
 export type RootBottomTabParamList = {

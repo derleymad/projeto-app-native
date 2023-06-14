@@ -1,161 +1,120 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Box, Button, Text, useColorMode } from "native-base";
+import { useCallback, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import { RootBottomTabParamList } from "../../types/navigation";
-import { Box, HStack, Select, Text, useColorMode } from "native-base";
 import PostsList from "../../components/PostsList";
-import { InputStyles } from "./styles";
-import { useState } from "react";
 import OptionMenu from "../../components/OptionMenu";
+import getInteractions from "../../services/get-interactions";
+import { IPost } from "../../types/post";
 
 type Props = NativeStackScreenProps<RootBottomTabParamList, 'Interactions'>;
 
 export default function Interactions({navigation}: Props){
   const { colorMode } = useColorMode();
   const dark = colorMode === "dark";
-  const [filter, setFilter] =  useState("last");
-  const [year, setYear] = useState("");
-  const [month, setMonth] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [showScrollTopButton, setShowScrollTopButton] = useState(false);
+  const [isToScrollUp, seIsToScrollUp] = useState(false);
+  const [userId, setUserId] = useState(-1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [posts, setPosts] = useState<IPost[]>([]);
 
-  const handleChangeFilterValue = (value: string) => {
-    setFilter(value);
-  };
+  const handleScroll = (e: any) => {
+    const topValue = e.nativeEvent.contentOffset.y;
+    topValue > 200 ? setShowScrollTopButton(true) : setShowScrollTopButton(false);
+  }
 
-  const handleChangeYearValue = (value: string) => {
-    setYear(value);
-  };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getInteractions(page, userId).then(
+      response => {
+        setPage(1);
+        setTotalPosts(response.meta.pagination.total);
+        setPosts(response.data);
+        
+        setRefreshing(false);
+      }
+    );
+  }, [userId]);
 
-  const handleChangeMonthValue = (value: string) => {
-    setMonth(value);
-  };
+  const loadMorePosts = async () => {
+    setRefreshing(true);
+    getInteractions(page + 1, userId).then(
+      response => {
+        setPage(page + 1);
+        setTotalPosts(response.meta.pagination.total);
+        setPosts([...posts, ...response.data]);
+        setRefreshing(false);
+      }
+    );
+  }
+
+  useEffect(() => {
+    AsyncStorage.getItem("user")
+    .then(user => {
+      if(user){
+        const { id } = JSON.parse(user);
+        setUserId(id);
+
+        getInteractions(page, id).then(
+          response => {
+            setTotalPosts(response.meta.pagination.total);
+            setPosts(response.data);
+          }
+        )
+      }
+    });
+  },[]);
 
   return (
-    <Box backgroundColor={ dark ? "#121827" : "#EDEFF1" }>
-        <PostsList 
-          posts={mockPosts} 
-          HeaderFlatist={
-            <Box>
-              <OptionMenu />
-              <Box alignItems={"center"}>
-                <Text mt={30} fontFamily={"default"} fontWeight={700} fontSize={32} color={ dark ? "#EDEFF1" :"#121827" }>Interações</Text>
-
-                <Box my={5} width={"80%"}>
-                  <Select 
-                    {...InputStyles} 
-                    variant="rounded" 
-                    selectedValue={filter} 
-                    accessibilityLabel="Selecione o ano" 
-                    placeholder="Ano" 
-                    _selectedItem={{
-                        bg: "teal.600",
-                      }} 
-                    mt={1} 
-                    onValueChange={handleChangeFilterValue}
-                  >
-                      <Select.Item label="Mais recentes" value="last" />
-                      <Select.Item label="Por data" value="date" />
-                  </Select>
-
-                  {filter === "date" ?
-                    <HStack space={4} mt={1}>
-                      <Box flex={1}>
-                        <Select 
-                          {...InputStyles} 
-                          variant="rounded" 
-                          selectedValue={year} 
-                          accessibilityLabel="Selecione o ano" 
-                          placeholder="Ano" 
-                          _selectedItem={{
-                            bg: "teal.600",
-                          }} 
-                          mt={1} 
-                          onValueChange={handleChangeYearValue}
-                        >
-                          {years.map((yearValue, index) => (
-                            <Select.Item key={index} label={yearValue} value={yearValue} />
-                          ))}
-                        </Select>
-                      </Box>
-
-                      <Box flex={1.5}>
-                        <Select 
-                          {...InputStyles} 
-                          variant="rounded" 
-                          selectedValue={month} 
-                          accessibilityLabel="Selecione o mês" 
-                          placeholder="Mês" 
-                          _selectedItem={{
-                            bg: "teal.600",
-                          }} 
-                          mt={1} 
-                          onValueChange={handleChangeMonthValue}
-                        >
-                          {monthsOfYear.map((monthValue, index) => (
-                            <Select.Item key={index} label={monthValue} value={monthValue} />
-                          ))}
-                        </Select>
-                      </Box>
-                    </HStack>
-                  : null}
-                </Box>
-              </Box>
+    <Box backgroundColor={ dark ? "#121827" : "#EDEFF1" } flex={1}>
+      <PostsList 
+        totalPosts={totalPosts}
+        loadMorePosts={loadMorePosts}
+        refreshing={refreshing}
+        isToScrollUp={isToScrollUp}
+        seIsToScrollUp={seIsToScrollUp}
+        onRefresh={onRefresh}
+        handleScroll={handleScroll}
+        posts={posts} 
+        navigation={navigation}
+        HeaderFlatist={
+          <Box>
+            <OptionMenu />
+            <Box alignItems="center">
+              <Text 
+                mt={30} 
+                fontFamily="default" 
+                fontWeight={700} 
+                fontSize={32} 
+                color={ dark ? "#EDEFF1" :"#121827" }
+              >Interações</Text>
             </Box>
-          } 
-        />
+          </Box>
+        }
+      />
+      {showScrollTopButton?
+        <Button 
+          position="absolute" 
+          bottom="40px" 
+          right="10px" 
+          rounded="full"
+          onPress={() => {
+              seIsToScrollUp(true)
+            }
+          }
+        >
+          <SimpleLineIcons
+            name="arrow-up"
+            color= "#EDEFF1"
+            size={25}
+          />
+        </Button>
+      : null}
     </Box>
   );
 }
 
-const years = ["2022", "2023"];
-
-const monthsOfYear = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro'
-];
-
-const mockPosts = [
-  {
-    id: "123",
-    title: "Post 1",
-    uri: "https://wallpaperaccess.com/full/317501.jpg",
-    postCreator: {
-      name: "Dr. Antonio Alves Pereira",
-      uri: null,
-    },
-  },
-  {
-    id: "456",
-    title: "Post 2",
-    uri: "https://wallpaperaccess.com/full/317501.jpg",
-    postCreator: {
-      name: "Dra. Maria Cavalcante Barroso",
-      uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
-    },
-  },
-  {
-    id: "789",
-    title: "Post 3",
-    uri: "https://wallpaperaccess.com/full/317501.jpg",
-    postCreator: {
-      name: "Dr. Italo Renan",
-      uri: null,
-    },
-  },
-  {
-    id: "741",
-    title: "Post 4",
-    uri: "https://wallpaperaccess.com/full/317501.jpg",
-    postCreator: {
-      name: "Dra. Eduada Amorim",
-      uri: null,
-    },
-  },
-]

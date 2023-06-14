@@ -42,7 +42,7 @@ export default function SelectImageInput({ setImageAssets, children } : SelectIm
 
   return (
     <>
-      <Pressable onPress={() => { setModalVisible(!modalVisible) }}>  
+      <Pressable width={"100%"} alignItems={"center"} onPress={() => { setModalVisible(!modalVisible) }}>  
         {children}
       </Pressable>
 

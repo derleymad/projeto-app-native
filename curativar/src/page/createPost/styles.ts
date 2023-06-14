@@ -7,9 +7,9 @@ type TStylesProps = {
   inputsContainer: InterfaceBoxProps,
   h1: ITextProps,
   h2: ITextProps,
-  imageInput: IButtonProps,
+  imageInput: InterfaceBoxProps,
   imageIcon: IconProps,
-  addButton: IButtonProps,
+  addButton: InterfaceBoxProps,
   addIcon: IconProps,
   area: any,
   input: IInputProps,
@@ -22,7 +22,7 @@ const Styles: TStylesProps = {
   box: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: '74px',
+    paddingTop: '10px',
     paddingLeft: '22px',
     paddingRight: '22px',
     paddingBottom: '20px',
@@ -45,7 +45,7 @@ const Styles: TStylesProps = {
     alignItems: 'center',
     borderRadius: 17,
     backgroundColor: 'gray.300',
-    width: '100%',
+    width: "100%",
     height: 277,
     marginTop: '24px',
     position: 'relative',
@@ -57,8 +57,8 @@ const Styles: TStylesProps = {
   },
   addButton: {
     position: 'absolute',
-    top: '50%',
-    left: '160%',
+    bottom: "15px",
+    right: "15px",
     backgroundColor: 'primary.default',
     width: 41,
     height: 41,
@@ -80,6 +80,7 @@ const Styles: TStylesProps = {
     marginTop: 26,
     placeholder: 'Descrição',
     color: 'gray.800',
+    fontSize: "4rem",
   },
   input: {
     color: 'gray.800',
@@ -87,6 +88,7 @@ const Styles: TStylesProps = {
     borderRadius: 20,
     borderWidth: 0,
     marginBottom: 5,
+    fontSize: "4rem"
   },
   inputsContainer: {
     width: '100%',
@@ -98,6 +100,7 @@ const Styles: TStylesProps = {
     color: 'gray.800',
     borderWidth: 0,
     bg: 'gray.300',
+    fontSize: "4rem",
   },
   containerBottom: {
     width: '100%',
