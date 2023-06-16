@@ -39,8 +39,7 @@ Este projeto foi feito em React Native, usando TypeScript para desenvolver um ap
   <img src="images/Temas.gif" width="200" />
 </p>
 
-## Tecnologia
-
+## Tecnologias
 #### Linguagens:
 
 - React Native 
@@ -60,7 +59,16 @@ Logo em seguida inicie o projeto:
 npx react-native start
 ```
 
-É necessário também que o Strap esteja devidamente configurado.
+### Configurarando o Strapi
+#### Requisitos
+- Docker e Docker Compose
+- Criar o .env na pasta /strapi e preencher de acordo com [.env.example](https://github.com/derleymad/projeto-app-native/blob/main/strapi/.env.example)
+
+#### Iniciando o strapi
+```cmd
+cd strapi
+docker-compose up -d
+```
 
 #### Requisitos do sistema 
 
