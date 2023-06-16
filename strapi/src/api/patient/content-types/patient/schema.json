@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "patients",
+  "info": {
+    "singularName": "patient",
+    "pluralName": "patients",
+    "displayName": "Patient",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "cpf": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "regex": "^(\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2})$"
+    },
+    "phone": {
+      "type": "string",
+      "required": true,
+      "regex": "^\\(\\d{2}\\)\\d{5}-\\d{4}$|^\\d{11}$"
+    },
+    "age": {
+      "required": true,
+      "min": 0,
+      "type": "integer"
+    },
+    "sex": {
+      "type": "enumeration",
+      "enum": [
+        "masculine",
+        "feminine"
+      ],
+      "required": true
+    },
+    "posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post.post",
+      "mappedBy": "patient"
+    }
+  }
+}
