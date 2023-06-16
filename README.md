@@ -32,11 +32,11 @@ Este projeto foi feito em React Native, usando TypeScript para desenvolver um ap
 ## Screenshots
 
 <p float="left">
- <img src="images/0.gif" width="200" />
-  <img src="images/1.gif" width="200" /> 
-  <img src="images/2.gif" width="200" />
-  <img src="images/1.gif" width="200" />
-  <img src="images/3.gif" width="200" />
+ <img src="images/Cadastro.gif" width="200" />
+  <img src="images/CriarPost.gif" width="200" /> 
+  <img src="images/Feed.gif" width="200" />
+  <img src="images/Comentarios.gif" width="200" />
+  <img src="images/Temas.gif" width="200" />
 </p>
 
 ## Tecnologia
