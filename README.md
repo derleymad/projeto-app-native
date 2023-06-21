@@ -70,8 +70,13 @@ cd strapi
 docker-compose up -d
 ```
 
-#### Requisitos do sistema 
+#### Importando o banco de dados (mariadb/mysql) para o container
+```cmd
+docker-compose exec strapiDB bash
+mysql -u nomeUsuario -psenha nomeBancoDeDados < mobile.sql
+```
 
+#### Requisitos do sistema 
 - Ter um computador
 - Npm v. > 9.5.1
 
